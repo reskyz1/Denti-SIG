@@ -4,9 +4,9 @@ from services.users_service import login_user_dentist_secretary, login_user_pati
 
 users_bp = Blueprint('users', __name__) #cria um blue prit chamado user 
 
-#Qualquer tipo de usuario
-#Responsabilidad do front fazer a verificação da senha
-# Email é unico no db
+# Qualquer tipo de usuario
+# Responsabilidad do front fazer a verificação da senha
+# Email e cpf é unico no db
 @users_bp.route('/api/user/register', methods=['POST'])
 def register_user():
     data = request.get_json()
@@ -35,15 +35,11 @@ def login_user():
     password = data.get('password')
 
     if 'email_cpf' in data:
-        email = data['email_cpf']
-        result, status_code = login_user_patient(email, password)
+        email_cpf = data['email_cpf']
+        result, status_code = login_user_patient(email_cpf, password)
 
     elif 'email' in data:
         email = data['email']
         result, status_code = login_user_dentist_secretary(email, password)
-
-    else:
-        result = {'error': 'Campo de identificação ausente (email_cpf ou email_cro)'}
-        status_code = 400
 
     return jsonify(result), status_code
