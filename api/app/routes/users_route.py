@@ -1,12 +1,13 @@
 from flask import Blueprint, request, jsonify
 from api.services.users_service import create_user_dentist, create_user_secretary, create_user_patient
+from api.services.users_service import login_user_service
 
 users_bp = Blueprint('users', __name__) #cria um blue prit chamado user 
 
 #Qualquer tipo de usuario. No request deve informar que tipo de usuario é 
 #Responsabilidad do front fazer a verificação da senha
-
-@users_bp.route('/api/register', methods=['POST'])
+# Email é unico no db
+@users_bp.route('/api/user/register', methods=['POST'])
 def register_user():
     data = request.get_json()
     user_type = data.get('user_type')
@@ -27,3 +28,11 @@ def register_user():
             result, status_code = create_user_patient(name, email, password,cpf, birth_date, phone)
 
     return jsonify(result), status_code
+
+    @users_bp.route('/api/user/login', methods=['POST'])
+    def login_user():
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
+        result, status_code = login_user_service(email,password)
+        return jsonify(result), status_code
