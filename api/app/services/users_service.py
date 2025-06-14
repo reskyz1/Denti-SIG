@@ -1,20 +1,26 @@
 import re
-def create_user_dentist(name, email, password, cro):
-    
-def create_user_secretary(name, email, password): 
 
-def create_user_patient(name, email, password,cpf, birth_date, phone):
+def create_user_dentist(name, email, password, cro):
+    pass
+
+def create_user_secretary(name, email, password): 
+    pass
+
+def create_user_patient(name, email, password, cpf, birth_date, phone):
+    pass
 
 def login_user_dentist_secretary():
+    pass
 
 def login_user_patient(email_cpf, password):
     if validate_cpf(email_cpf):
-        #procurar pelo cpf
+        # procurar pelo cpf
+        pass
     else:
-        #procurar pelo email
+        # procurar pelo email
+        pass
 
-    return {'response': 'sucess login'}, 201
-
+    return {'response': 'success login'}, 201
 
 # esssa função deveria ta aq?
 def validate_cpf(cpf: str) -> bool:

@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from services.users_service import create_user_dentist, create_user_secretary, create_user_patient
-from services.users_service import login_user_dentist_secretary, login_user_patient
+from app.services.users_service import create_user_dentist, create_user_secretary, create_user_patient
+from app.services.users_service import login_user_dentist_secretary, login_user_patient
 
 users_bp = Blueprint('users', __name__) #cria um blue prit chamado user 
 
