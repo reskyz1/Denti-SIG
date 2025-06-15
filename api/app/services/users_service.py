@@ -1,40 +1,101 @@
-import re
-def create_user_dentist(name, email, password, cro):
-    
-def create_user_secretary(name, email, password): 
-
-def create_user_patient(name, email, password,cpf, birth_date, phone):
-
-def login_user_dentist_secretary():
-
-def login_user_patient(email_cpf, password):
-    if validate_cpf(email_cpf):
-        #procurar pelo cpf
-    else:
-        #procurar pelo email
-
-    return {'response': 'sucess login'}, 201
+from werkzeug.security import generate_password_hash, check_password_hash
+from app.models.dentista import Dentista
+from app.models.paciente import Paciente
+from app.models.secretario import Secretario
+from app import db
+from app.utils.validators import validate_cpf
 
 
-# esssa função deveria ta aq?
-def validate_cpf(cpf: str) -> bool:
-    
-    if not re.match(r'\d{3}\.\d{3}\.\d{3}-\d{2}', cpf):
-        return False
+class UserService:
 
-    numbers = [int(digit) for digit in cpf if digit.isdigit()]
+    @staticmethod
+    def create_dentist(nome, email, cpf, telefone, senha, cro):
+        if not all([nome, email, cpf, senha, cro]):
+            return {'erro': 'Campos obrigatórios ausentes'}, 400
 
-    if len(numbers) != 11 or len(set(numbers)) == 1:
-        return False
+        if Dentista.query.filter((Dentista.email == email) | (Dentista.cpf == cpf)).first():
+            return {'erro': 'Dentista já cadastrado'}, 409
 
-    sum_of_products = sum(a*b for a, b in zip(numbers[0:9], range(10, 1, -1)))
-    expected_digit = (sum_of_products * 10 % 11) % 10
-    if numbers[9] != expected_digit:
-        return False
+        hashed = generate_password_hash(senha)
 
-    sum_of_products = sum(a*b for a, b in zip(numbers[0:10], range(11, 1, -1)))
-    expected_digit = (sum_of_products * 10 % 11) % 10
-    if numbers[10] != expected_digit:
-        return False
+        novo = Dentista(
+            nome=nome,
+            email=email,
+            cpf=cpf,
+            telefone=telefone,
+            senha=hashed,
+            cro=cro
+        )
+        db.session.add(novo)
+        db.session.commit()
 
-    return True
+        return {'mensagem': 'Dentista cadastrado com sucesso'}, 201
+
+    @staticmethod
+    def create_secretary(nome, email, cpf, telefone, senha):
+        if not all([nome, email, cpf, senha]):
+            return {'erro': 'Campos obrigatórios ausentes'}, 400
+
+        if Secretario.query.filter((Secretario.email == email) | (Secretario.cpf == cpf)).first():
+            return {'erro': 'Secretário já cadastrado'}, 409
+
+        hashed = generate_password_hash(senha)
+
+        novo = Secretario(
+            nome=nome,
+            email=email,
+            cpf=cpf,
+            telefone=telefone,
+            senha=hashed
+        )
+        db.session.add(novo)
+        db.session.commit()
+
+        return {'mensagem': 'Secretário cadastrado com sucesso'}, 201
+
+    @staticmethod
+    def create_patient(nome, email, cpf, telefone, senha, data_nascimento):
+        if not all([nome, email, cpf, senha, data_nascimento]):
+            return {'erro': 'Campos obrigatórios ausentes'}, 400
+
+        if not validate_cpf(cpf):
+            return {'erro': 'CPF inválido'}, 400
+
+        if Paciente.query.filter((Paciente.email == email) | (Paciente.cpf == cpf)).first():
+            return {'erro': 'Paciente já cadastrado'}, 409
+
+        hashed = generate_password_hash(senha)
+
+        novo = Paciente(
+            nome=nome,
+            email=email,
+            cpf=cpf,
+            telefone=telefone,
+            senha=hashed,
+            data_nascimento=data_nascimento
+        )
+        db.session.add(novo)
+        db.session.commit()
+
+        return {'mensagem': 'Paciente cadastrado com sucesso'}, 201
+
+    @staticmethod
+    def login_dentist_or_secretary(email, senha):
+        usuario = Dentista.query.filter_by(email=email).first() or Secretario.query.filter_by(email=email).first()
+
+        if not usuario or not check_password_hash(usuario.senha, senha):
+            return {'erro': 'Credenciais inválidas'}, 401
+
+        return {'mensagem': 'Login realizado com sucesso'}, 200
+
+    @staticmethod
+    def login_patient(email_ou_cpf, senha):
+        if validate_cpf(email_ou_cpf):
+            usuario = Paciente.query.filter_by(cpf=email_ou_cpf).first()
+        else:
+            usuario = Paciente.query.filter_by(email=email_ou_cpf).first()
+
+        if not usuario or not check_password_hash(usuario.senha, senha):
+            return {'erro': 'Credenciais inválidas'}, 401
+
+        return {'mensagem': 'Login realizado com sucesso'}, 200
