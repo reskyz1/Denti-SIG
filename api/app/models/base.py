@@ -5,6 +5,7 @@ class BaseModel(db.Model):
     __abstract__ = True  # não cria tabela para isso
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
+    senha = db.Column(db.String(128), nullable=False)
     cpf = db.Column(db.String(11), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     telefone = db.Column(db.String(15))

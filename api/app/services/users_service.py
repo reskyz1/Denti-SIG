@@ -1,3 +1,4 @@
+from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.models.dentista import Dentista
 from app.models.paciente import Paciente
@@ -32,7 +33,7 @@ class UserService:
         return {'mensagem': 'Dentista cadastrado com sucesso'}, 201
 
     @staticmethod
-    def create_secretary(nome, email, cpf, telefone, senha):
+    def create_secretary(nome, email, cpf, telefone, senha, matricula):
         if not all([nome, email, cpf, senha]):
             return {'erro': 'Campos obrigatórios ausentes'}, 400
 
@@ -46,7 +47,8 @@ class UserService:
             email=email,
             cpf=cpf,
             telefone=telefone,
-            senha=hashed
+            senha=hashed,
+            matricula=matricula
         )
         db.session.add(novo)
         db.session.commit()
@@ -54,7 +56,7 @@ class UserService:
         return {'mensagem': 'Secretário cadastrado com sucesso'}, 201
 
     @staticmethod
-    def create_patient(nome, email, cpf, telefone, senha, data_nascimento):
+    def create_patient(nome, email, cpf, telefone, senha, data_nascimento, endereco, sexo):
         if not all([nome, email, cpf, senha, data_nascimento]):
             return {'erro': 'Campos obrigatórios ausentes'}, 400
 
@@ -64,6 +66,12 @@ class UserService:
         if Paciente.query.filter((Paciente.email == email) | (Paciente.cpf == cpf)).first():
             return {'erro': 'Paciente já cadastrado'}, 409
 
+        try:
+            # Converte string para objeto datetime.date
+            data_nascimento = datetime.strptime(data_nascimento, "%Y/%m/%d").date()
+        except ValueError:
+            return {'erro': 'Formato de data inválido. Use YYYY-MM-DD.'}, 400
+
         hashed = generate_password_hash(senha)
 
         novo = Paciente(
@@ -72,7 +80,9 @@ class UserService:
             cpf=cpf,
             telefone=telefone,
             senha=hashed,
-            data_nascimento=data_nascimento
+            data_nascimento=data_nascimento,
+            endereco=endereco,
+            sexo=sexo
         )
         db.session.add(novo)
         db.session.commit()

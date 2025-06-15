@@ -1,3 +1,4 @@
+import re
 def validate_cpf(cpf: str) -> bool:
     
     if not re.match(r'\d{3}\.\d{3}\.\d{3}-\d{2}', cpf):

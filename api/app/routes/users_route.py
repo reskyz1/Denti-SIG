@@ -1,45 +1,29 @@
 from flask import Blueprint, request, jsonify
-from services.users_service import create_user_dentist, create_user_secretary, create_user_patient
-from services.users_service import login_user_dentist_secretary, login_user_patient
+from app.services.users_service import UserService
 
-users_bp = Blueprint('users', __name__) #cria um blue prit chamado user 
+users_bp = Blueprint('users', __name__)
 
-# Qualquer tipo de usuario
-# Responsabilidad do front fazer a verificação da senha
-# Email e cpf é unico no db
-@users_bp.route('/api/user/register', methods=['POST'])
-def register_user():
-    data = request.get_json()
-    name = data.get('name')
-    email = data.get('email')
-    password = data.get('password')
-    if 'cro' in data:
-        #dentista
-        cro = data.get('cro')
-        result, status_code = create_user_dentist(name, email, password, cro)
-    elif 'cpf' in data:
-        #paciente
-        cpf = data.get('cpf') 
-        birth_date = data.get('birth_date')
-        phone = data.get('phone')
-        result, status_code = create_user_patient(name, email, password,cpf, birth_date, phone)
-    else:
-        #secretario
-        result, status_code = create_user_secretary(name, email, password)
-    return jsonify(result), status_code
+@users_bp.route('/register/dentist', methods=['POST'])
+def register_dentist():
+    data = request.json
+    return UserService.create_dentist(**data)
 
-@users_bp.route('/api/user/login', methods=['POST'])
+@users_bp.route('/register/secretary', methods=['POST'])
+def register_secretary():
+    data = request.json
+    return UserService.create_secretary(**data)
 
-def login_user():
-    data = request.get_json()
-    password = data.get('password')
+@users_bp.route('/register/patient', methods=['POST'])
+def register_patient():
+    data = request.json
+    return UserService.create_patient(**data)
 
-    if 'email_cpf' in data:
-        email_cpf = data['email_cpf']
-        result, status_code = login_user_patient(email_cpf, password)
+@users_bp.route('/login/ds', methods=['POST'])
+def login_dentist_secretary():
+    data = request.json
+    return UserService.login_dentist_or_secretary(data['email'], data['senha'])
 
-    elif 'email' in data:
-        email = data['email']
-        result, status_code = login_user_dentist_secretary(email, password)
-
-    return jsonify(result), status_code
+@users_bp.route('/login/patient', methods=['POST'])
+def login_patient():
+    data = request.json
+    return UserService.login_patient(data['email_cpf'], data['senha'])
