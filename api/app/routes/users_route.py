@@ -1,5 +1,6 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, _app_ctx_stack
 from app.services.users_service import UserService
+from app.utils.token_auth import requires_auth
 
 users_bp = Blueprint('users', __name__)
 
@@ -27,3 +28,10 @@ def login_dentist_secretary():
 def login_patient():
     data = request.json
     return UserService.login_patient(data['email_cpf'], data['senha'])
+
+@users_bp.route('/login/get_dentist', methods=['GET'])
+@requires_auth
+def get_dentist_session_id():
+    data = request.json
+    payload = _app_ctx_stack.top.current_user
+    return payload['sub']

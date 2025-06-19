@@ -1,6 +1,6 @@
 from functools import wraps
 import datetime
-from flask import request
+from flask import request, _app_ctx_stack
 import jwt
 import os
 from dotenv import load_dotenv
@@ -65,9 +65,10 @@ def requires_auth(f):
         try:
             SECRET_KEY = os.getenv('SECRET_KEY')
             payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-            return payload
+            _app_ctx_stack.top.current_user = payload  # temporarily storing the payload in memory, only during the processing of the current request.
         except jwt.ExpiredSignatureError:
-            return None  # Token expirado
+            return None  # expire token
         except jwt.InvalidTokenError:
-            return None  # Token inválido
+            return None  # invalid token
+        return f(*args, **kwargs)  # exe original func
     return decorated
