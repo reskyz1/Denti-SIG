@@ -35,3 +35,17 @@ def get_dentist_session_id():
     data = request.json
     payload = _app_ctx_stack.top.current_user
     return payload['sub']
+
+@users_bp.route('/pacientes', methods=['GET'])
+def listar_pacientes():
+    pacientes = Paciente.query.all()
+    lista = []
+    for p in pacientes:
+        lista.append({
+            "nome": p.nome,
+            "email": p.email,
+            "cpf": p.cpf,
+            "data_nascimento": str(p.data_nascimento),
+            "telefone": p.telefone
+        })
+    return jsonify(lista), 200
