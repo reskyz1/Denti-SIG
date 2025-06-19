@@ -24,12 +24,12 @@ def generate_token(user_id):
 
 def get_token_auth_header():
     """
-    Obtém o token de acesso enviado no header Authorization.
+    get acess token send by Authorization header.
 
-    Regras:
-    - O header deve existir.
-    - O formato deve ser: "Authorization: Bearer <token>"
-    - Se o formato for inválido, levanta um AuthError.
+    Rules:
+    - header must exist.
+    - format: "Authorization: Bearer <token>"
+    - invalid format -> raise AuthError.
     """
     auth = request.headers.get("Authorization", None)
     if not auth:
