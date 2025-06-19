@@ -7,6 +7,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+class AuthError(Exception):
+    def __init__(self, error, status_code):
+        self.error = error
+        self.status_code = status_code
+
 def generate_token(user_id):
     SECRET_KEY = os.getenv('SECRET_KEY')
     payload = {
@@ -16,9 +21,15 @@ def generate_token(user_id):
     token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
     return token
 
-#necessario que o header to token siga o padrão 'bearer token'
+
 def get_token_auth_header():
-    """Obtains the access token from the Authorization Header
+    """
+    Obtém o token de acesso enviado no header Authorization.
+
+    Regras:
+    - O header deve existir.
+    - O formato deve ser: "Authorization: Bearer <token>"
+    - Se o formato for inválido, levanta um AuthError.
     """
     auth = request.headers.get("Authorization", None)
     if not auth:
