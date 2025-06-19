@@ -5,6 +5,7 @@ from app.models.paciente import Paciente
 from app.models.secretario import Secretario
 from app import db
 from app.utils.validators import validate_cpf
+from app.utils.token_auth import generate_token
 
 
 class UserService:
@@ -95,8 +96,9 @@ class UserService:
 
         if not usuario or not check_password_hash(usuario.senha, senha):
             return {'erro': 'Credenciais inválidas'}, 401
-
-        return {'mensagem': 'Login realizado com sucesso'}, 200
+        
+        token = generate_token(usuario.id)
+        return {'mensagem': 'Login realizado com sucesso', 'token': token}, 200
 
     @staticmethod
     def login_patient(email_ou_cpf, senha):
@@ -108,4 +110,5 @@ class UserService:
         if not usuario or not check_password_hash(usuario.senha, senha):
             return {'erro': 'Credenciais inválidas'}, 401
 
-        return {'mensagem': 'Login realizado com sucesso'}, 200
+        token = generate_token(usuario.id)
+        return {'mensagem': 'Login realizado com sucesso', 'token': token}, 200
