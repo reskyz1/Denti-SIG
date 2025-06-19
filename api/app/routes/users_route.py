@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, _app_ctx_stack
+from flask import Blueprint, request, jsonify
 from app.services.users_service import UserService
 from app.utils.token_auth import requires_auth
 

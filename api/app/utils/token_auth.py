@@ -1,6 +1,6 @@
 from functools import wraps
 import datetime
-from flask import request, _app_ctx_stack
+from flask import request, current_app
 import jwt
 import os
 from dotenv import load_dotenv
