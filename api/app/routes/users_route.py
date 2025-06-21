@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.services.users_service import UserService
 from app.utils.token_auth import requires_auth
+from datetime import datetime, date, time
 
 users_bp = Blueprint('users', __name__)
 
@@ -49,3 +50,29 @@ def listar_pacientes():
             "telefone": p.telefone
         })
     return jsonify(lista), 200
+
+@users_bp.route('/consulta', methods=['POST'])
+def criar_consulta():
+    data = request.get_json()
+
+    try:
+        data_consulta = datetime.strptime(data['data'], '%Y-%m-%d').date()
+        hora_consulta = datetime.strptime(data['hora'], '%H:%M').time()
+
+        nova_consulta = Consulta(
+            data = data_consulta,
+            hora = hora_consulta,
+            observacoes = data.get('observacoes', ''),
+            status = data.get('status', 'agendada'),
+            paciente_id = data['paciente_id'],
+            dentista_id = data['dentista_id']
+        )
+
+        db.session.add(nova_consulta)
+        db.session.commit()
+
+        return jsonify({"mensagem": "Consulta criada com sucesso"}), 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"erro": str(e)}), 400
