@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.services.users_service import UserService
+from app.services.consultas_service import ConsultaService
 from app.utils.token_auth import requires_auth
 from datetime import datetime, date, time
 
@@ -33,46 +34,53 @@ def login_patient():
 @users_bp.route('/login/get_dentist', methods=['GET'])
 @requires_auth
 def get_dentist_session_id():
-    data = request.json
     payload = _app_ctx_stack.top.current_user
     return payload['sub']
 
 @users_bp.route('/pacientes', methods=['GET'])
 def listar_pacientes():
-    pacientes = Paciente.query.all()
-    lista = []
-    for p in pacientes:
-        lista.append({
-            "nome": p.nome,
-            "email": p.email,
-            "cpf": p.cpf,
-            "data_nascimento": str(p.data_nascimento),
-            "telefone": p.telefone
-        })
+    lista = UserService.listar_pacientes()
     return jsonify(lista), 200
 
-@users_bp.route('/consulta', methods=['POST'])
+@users_bp.route('/consultas', methods=['POST'])
 def criar_consulta():
-    data = request.get_json()
-
     try:
-        data_consulta = datetime.strptime(data['data'], '%Y-%m-%d').date()
-        hora_consulta = datetime.strptime(data['hora'], '%H:%M').time()
-
-        nova_consulta = Consulta(
-            data = data_consulta,
-            hora = hora_consulta,
-            observacoes = data.get('observacoes', ''),
-            status = data.get('status', 'agendada'),
-            paciente_id = data['paciente_id'],
-            dentista_id = data['dentista_id']
-        )
-
-        db.session.add(nova_consulta)
-        db.session.commit()
-
-        return jsonify({"mensagem": "Consulta criada com sucesso"}), 201
-
+        dados = request.json
+        consulta = ConsultaService.criar_consulta(dados)
+        return jsonify({'mensagem': 'Consulta criada com sucesso', 'id': consulta.id}), 201
     except Exception as e:
-        db.session.rollback()
-        return jsonify({"erro": str(e)}), 400
+        return jsonify({'erro': str(e)}), 400
+
+@users_bp.route('/consultas/<int:id>', methods=['PUT'])
+def atualizar_consulta(id):
+    try:
+        dados = request.json
+        ConsultaService.atualizar_consulta(id, dados)
+        return jsonify({'mensagem': 'Consulta atualizada com sucesso'})
+    except Exception as e:
+        return jsonify({'erro': str(e)}), 400
+
+@users_bp.route('/consultas/<int:id>', methods=['DELETE'])
+def deletar_consulta(id):
+    try:
+        ConsultaService.deletar_consulta(id)
+        return jsonify({'mensagem': 'Consulta deletada com sucesso'})
+    except Exception as e:
+        return jsonify({'erro': str(e)}), 400
+    
+@users_bp.route('/consultas', methods=['GET'])
+def listar_consultas():
+    filtros = request.args.to_dict()
+    consultas = ConsultaService.listar_consultas(filtros)
+
+    resultado = []
+    for c in consultas:
+        resultado.append({
+            'id': c.id,
+            'data': str(c.data),
+            'hora': str(c.hora),
+            'status': c.status,
+            'observacoes': c.observacoes,
+            'paciente_id': c.paciente_id,
+            'dentista_id': c.dentista_id
+        })

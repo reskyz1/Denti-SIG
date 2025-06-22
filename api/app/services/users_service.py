@@ -112,3 +112,17 @@ class UserService:
 
         token = generate_token(usuario.id)
         return {'mensagem': 'Login realizado com sucesso', 'token': token}, 200
+
+    @staticmethod
+    def listar_pacientes():
+        pacientes = Paciente.query.all()
+        lista = []
+        for p in pacientes:
+            lista.append({
+                "nome": p.nome,
+                "email": p.email,
+                "cpf": p.cpf,
+                "data_nascimento": str(p.data_nascimento),
+                "telefone": p.telefone
+            })
+        return lista
