@@ -37,6 +37,11 @@ def get_dentist_session_id():
     payload = _app_ctx_stack.top.current_user
     return payload['sub']
 
+@users_bp.route('/dentistas', methods=['GET'])
+def listar_dentistas():
+    lista = UserService.listar_dentistas()
+    return jsonify(lista), 200
+
 @users_bp.route('/pacientes', methods=['GET'])
 def listar_pacientes():
     lista = UserService.listar_pacientes()

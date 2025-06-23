@@ -112,7 +112,23 @@ class UserService:
 
         token = generate_token(usuario.id)
         return {'mensagem': 'Login realizado com sucesso', 'token': token}, 200
-
+    
+    
+    @staticmethod
+    def listar_dentistas():
+        dentista = Dentista.query.all()
+        lista = []
+        for d in dentista:
+            lista.append({
+                "nome": d.nome,
+                "email": d.email,
+                "cpf": d.cpf,
+                "data_nascimento": str(d.data_nascimento),
+                "telefone": d.telefone,
+                "especialidade": d.especialidade
+            })
+        return lista
+    
     @staticmethod
     def listar_pacientes():
         pacientes = Paciente.query.all()
@@ -126,6 +142,7 @@ class UserService:
                 "telefone": p.telefone
             })
         return lista
+    
     @staticmethod
     def paciente_por_cpf(cpf):
         return Paciente.query.get_or_404(cpf)
