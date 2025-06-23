@@ -126,3 +126,6 @@ class UserService:
                 "telefone": p.telefone
             })
         return lista
+    @staticmethod
+    def paciente_por_cpf(cpf):
+        return Paciente.query.get_or_404(cpf)

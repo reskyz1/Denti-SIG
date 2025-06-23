@@ -42,6 +42,14 @@ def listar_pacientes():
     lista = UserService.listar_pacientes()
     return jsonify(lista), 200
 
+@users_bp.route('/pacientes/<int:cpf>', methods=['GET'])
+def paciente_por_cpf(cpf):
+    try:
+        paciente = UserService.paciente_por_cpf(cpf)
+        return jsonify({'mensagem': paciente.str})
+    except Exception as e:
+        return jsonify({'erro': str(e)}), 400
+
 @users_bp.route('/consultas', methods=['POST'])
 def criar_consulta():
     try:
