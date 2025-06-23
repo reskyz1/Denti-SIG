@@ -4,7 +4,7 @@ from app.models.dentista import Dentista
 from app.models.paciente import Paciente
 from app.models.secretario import Secretario
 from app import db
-from app.utils.validators import validate_cpf
+from api.app.utils.cpf_validator import validate_cpf
 from app.utils.token_auth import generate_token
 
 

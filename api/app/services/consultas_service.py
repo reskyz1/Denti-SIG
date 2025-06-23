@@ -7,6 +7,7 @@ from datetime import datetime
 class ConsultaService:
     @staticmethod
     def criar_consulta(data_dict):
+        validar_
         nova = Consulta(
             data=datetime.strptime(data_dict['data'], '%Y-%m-%d').date(),
             hora=datetime.strptime(data_dict['hora'], '%H:%M').time(),
