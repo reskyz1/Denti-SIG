@@ -1,46 +1,148 @@
-import re
+from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
+from app.models.dentista import Dentista
+from app.models.paciente import Paciente
+from app.models.secretario import Secretario
+from app import db
+from api.app.utils.cpf_validator import validate_cpf
+from app.utils.token_auth import generate_token
 
-def create_user_dentist(name, email, password, cro):
-    pass
 
-def create_user_secretary(name, email, password): 
-    pass
+class UserService:
 
-def create_user_patient(name, email, password, cpf, birth_date, phone):
-    pass
+    @staticmethod
+    def create_dentist(nome, email, cpf, telefone, senha, cro):
+        if not all([nome, email, cpf, senha, cro]):
+            return {'erro': 'Campos obrigatórios ausentes'}, 400
 
-def login_user_dentist_secretary():
-    pass
+        if Dentista.query.filter((Dentista.email == email) | (Dentista.cpf == cpf)).first():
+            return {'erro': 'Dentista já cadastrado'}, 409
 
-def login_user_patient(email_cpf, password):
-    if validate_cpf(email_cpf):
-        # procurar pelo cpf
-        pass
-    else:
-        # procurar pelo email
-        pass
+        hashed = generate_password_hash(senha)
 
-    return {'response': 'success login'}, 201
+        novo = Dentista(
+            nome=nome,
+            email=email,
+            cpf=cpf,
+            telefone=telefone,
+            senha=hashed,
+            cro=cro
+        )
+        db.session.add(novo)
+        db.session.commit()
 
-# esssa função deveria ta aq?
-def validate_cpf(cpf: str) -> bool:
+        return {'mensagem': 'Dentista cadastrado com sucesso'}, 201
+
+    @staticmethod
+    def create_secretary(nome, email, cpf, telefone, senha, matricula):
+        if not all([nome, email, cpf, senha]):
+            return {'erro': 'Campos obrigatórios ausentes'}, 400
+
+        if Secretario.query.filter((Secretario.email == email) | (Secretario.cpf == cpf)).first():
+            return {'erro': 'Secretário já cadastrado'}, 409
+
+        hashed = generate_password_hash(senha)
+
+        novo = Secretario(
+            nome=nome,
+            email=email,
+            cpf=cpf,
+            telefone=telefone,
+            senha=hashed,
+            matricula=matricula
+        )
+        db.session.add(novo)
+        db.session.commit()
+
+        return {'mensagem': 'Secretário cadastrado com sucesso'}, 201
+
+    @staticmethod
+    def create_patient(nome, email, cpf, telefone, senha, data_nascimento, endereco, sexo):
+        if not all([nome, email, cpf, senha, data_nascimento]):
+            return {'erro': 'Campos obrigatórios ausentes'}, 400
+
+        if not validate_cpf(cpf):
+            return {'erro': 'CPF inválido'}, 400
+
+        if Paciente.query.filter((Paciente.email == email) | (Paciente.cpf == cpf)).first():
+            return {'erro': 'Paciente já cadastrado'}, 409
+
+        try:
+            # Converte string para objeto datetime.date
+            data_nascimento = datetime.strptime(data_nascimento, "%Y/%m/%d").date()
+        except ValueError:
+            return {'erro': 'Formato de data inválido. Use YYYY-MM-DD.'}, 400
+
+        hashed = generate_password_hash(senha)
+
+        novo = Paciente(
+            nome=nome,
+            email=email,
+            cpf=cpf,
+            telefone=telefone,
+            senha=hashed,
+            data_nascimento=data_nascimento,
+            endereco=endereco,
+            sexo=sexo
+        )
+        db.session.add(novo)
+        db.session.commit()
+
+        return {'mensagem': 'Paciente cadastrado com sucesso'}, 201
+
+    @staticmethod
+    def login_dentist_or_secretary(email, senha):
+        usuario = Dentista.query.filter_by(email=email).first() or Secretario.query.filter_by(email=email).first()
+
+        if not usuario or not check_password_hash(usuario.senha, senha):
+            return {'erro': 'Credenciais inválidas'}, 401
+        
+        token = generate_token(usuario.id)
+        return {'mensagem': 'Login realizado com sucesso', 'token': token}, 200
+
+    @staticmethod
+    def login_patient(email_ou_cpf, senha):
+        if validate_cpf(email_ou_cpf):
+            usuario = Paciente.query.filter_by(cpf=email_ou_cpf).first()
+        else:
+            usuario = Paciente.query.filter_by(email=email_ou_cpf).first()
+
+        if not usuario or not check_password_hash(usuario.senha, senha):
+            return {'erro': 'Credenciais inválidas'}, 401
+
+        token = generate_token(usuario.id)
+        return {'mensagem': 'Login realizado com sucesso', 'token': token}, 200
     
-    if not re.match(r'\d{3}\.\d{3}\.\d{3}-\d{2}', cpf):
-        return False
-
-    numbers = [int(digit) for digit in cpf if digit.isdigit()]
-
-    if len(numbers) != 11 or len(set(numbers)) == 1:
-        return False
-
-    sum_of_products = sum(a*b for a, b in zip(numbers[0:9], range(10, 1, -1)))
-    expected_digit = (sum_of_products * 10 % 11) % 10
-    if numbers[9] != expected_digit:
-        return False
-
-    sum_of_products = sum(a*b for a, b in zip(numbers[0:10], range(11, 1, -1)))
-    expected_digit = (sum_of_products * 10 % 11) % 10
-    if numbers[10] != expected_digit:
-        return False
-
-    return True
+    
+    @staticmethod
+    def listar_dentistas():
+        dentista = Dentista.query.all()
+        lista = []
+        for d in dentista:
+            lista.append({
+                "nome": d.nome,
+                "email": d.email,
+                "cpf": d.cpf,
+                "data_nascimento": str(d.data_nascimento),
+                "telefone": d.telefone,
+                "especialidade": d.especialidade
+            })
+        return lista
+    
+    @staticmethod
+    def listar_pacientes():
+        pacientes = Paciente.query.all()
+        lista = []
+        for p in pacientes:
+            lista.append({
+                "nome": p.nome,
+                "email": p.email,
+                "cpf": p.cpf,
+                "data_nascimento": str(p.data_nascimento),
+                "telefone": p.telefone
+            })
+        return lista
+    
+    @staticmethod
+    def paciente_por_cpf(cpf):
+        return Paciente.query.get_or_404(cpf)
