@@ -66,13 +66,52 @@ class ConsultaService:
             query = query.filter(Consulta.data == filtros['data'])
         if 'status' in filtros:
             query = query.filter(Consulta.data == filtros['status'])
-        if 'dantista_id' in filtros:
-            query = query.filter(Consulta.data == filtros['dantista_id'])
+        if 'dentista_id' in filtros:
+            query = query.filter(Consulta.data == filtros['dentista_id'])
         if 'paciente_id' in filtros:
             query = query.filter(Consulta.data == filtros['paciente_id'])
         
         return query.all()
-        
+    
+    @staticmethod
+    def listar_horarios_diponiveis(dentista_id, paciente_id):
+        """
+        Return:
+            list of tuples (date, time)
+        """
+        dia = datetime.date.today()
+        hora = datetime.time.now()
+        horarios_ind = Consulta.query.with_entities(Consulta.dia, Consulta.hora).filter(Consulta.data >= dia, Consulta.data > hora, Consulta.dentista_id == dentista_id).all()
+        horarios_ind.append(Consulta.query.with_entities(Consulta.dia,Consulta.hora).filter(Consulta.data >= dia, Consulta.data > hora, Consulta.paciente_id == paciente_id).all())
+        horarios = criar_lista_horario(dia)
+        horarios_disp = [h for h in horarios if h not in horarios_ind]
+        return horarios_disp
+    
+def criar_lista_horario(dia_base, dias: int = 7):
+    """
+    Cria uma lista de tuplas (date, time) com diferença de 30 minutos,
+    começando a partir de um dia base, por uma quantidade de dias.
+
+    Args:
+        dia_base (date): Dia inicial.
+        dias (int): Quantidade de dias (default = 7).
+
+    Returns:
+        list: Lista de tuplas (data, hora).
+    """
+    dif = 30  # Diferença em minutos
+    n_horarios = int((24 * 60) / dif)  
+    lista = []
+
+    for i in range(dias):
+        horario = datetime.datetime.combine(dia_base, datetime.time(0, 0))  
+        for j in range(n_horarios):
+            lista.append((dia_base, horario.time())) 
+            horario += datetime.timedelta(minutes=dif)  
+        dia_base += datetime.timedelta(days=1)  
+
+    return lista
+
 def validar_disponibilidade_consulta(data, hora, dentista_id):
     """
     Raises:
