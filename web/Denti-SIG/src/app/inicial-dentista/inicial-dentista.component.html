@@ -1,0 +1,53 @@
+<style>
+    .container {
+      display: grid;
+      grid-template-areas:
+        "header header"
+        "content content"
+        "footer footer";
+      grid-template-columns: 1fr 5fr;
+      padding: 5px;
+    }
+    .container > div {
+      background-color: rgb(200, 200, 200);
+      padding: 10px;
+    }
+    .container > div.header {
+      grid-area: header;
+      text-align: center;
+      background-color: rgb(240, 240, 240);
+    }
+    .container > div.menu {
+      grid-area: menu;
+    }
+    .container > div.content {
+      grid-area: content;
+    }
+    .container > div.footer {
+      grid-area: footer;
+    }
+    .button {
+      padding: 5px;
+      color: rgb(20,20,20);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 25px;
+      border-style:solid;
+      border-width: 3;
+      border-radius: 5px;
+    }
+    </style>
+    <main>
+    
+        <div class="container">
+            <div class="header">
+                <h2 style="float:left">Logo</h2>
+                <a class="button" style="margin-right: 20px;">Agenda</a>
+                <a class="button" style="margin-right: 20px;">Pacientes</a>
+                <a class="button" style="margin-right: 20px;">Finaceiro</a>
+                <a class="button" style="margin-right: 20px;">Estoque</a>
+                <a class="button" style="float:right">Conta</a></div>
+            <div class="content">Conteudo</div>
+            <div class="footer"><h4></h4></div>
+          </div>
+    
+    </main>
