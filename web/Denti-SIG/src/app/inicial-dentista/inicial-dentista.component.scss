@@ -1,0 +1,37 @@
+.container {
+    display: grid;
+    grid-template-areas:
+      "header header"
+      "content content"
+      "footer footer";
+    grid-template-columns: 1fr 5fr;
+    padding: 5px;
+  }
+  .container > div {
+    background-color: rgb(200, 200, 200);
+    padding: 10px;
+  }
+  .container > div.header {
+    grid-area: header;
+    text-align: center;
+    background-color: rgb(240, 240, 240);
+  }
+  .container > div.menu {
+    grid-area: menu;
+  }
+  .container > div.content {
+    grid-area: content;
+  }
+  .container > div.footer {
+    grid-area: footer;
+  }
+  .buttonB {
+    padding: 5px;
+    color: rgb(20,20,20);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 25px;
+    border-style:solid !important;
+    border-width: 3 !important;
+    border-radius: 5px !important;
+    border-color: rgb(20,20,20) !important;
+  }
