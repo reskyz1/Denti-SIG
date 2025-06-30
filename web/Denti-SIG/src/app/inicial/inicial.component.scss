@@ -1,0 +1,68 @@
+.container {
+    display: grid;
+    grid-template-areas:
+      "header"
+      "content"
+      "footer";
+    grid-template-columns: 1fr;
+    padding: 5px;
+  }
+  .container > div {
+    background-color: rgb(240, 240, 240);
+    padding: 10px;
+  }
+  .container > div.header {
+    grid-area: header;
+    text-align: center;
+    background-color: rgb(240, 240, 240);
+  }
+  .container > div.menu {
+    grid-area: menu;
+  }
+  .container > div.content {
+    grid-area: content;
+  }
+  .container > div.footer {
+    grid-area: footer;
+    background-color: rgb(200, 200, 200);
+  }
+  .headerbutton {
+    padding: 5px;
+    color: rgb(20,20,20);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 25px;
+  }
+  .loginbutton {
+    padding: 5px;
+    color: rgb(255, 255, 255);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 25px;
+    background-color: rgb(88, 155, 255);
+    border-radius: 5px;
+  }
+  .button02 {
+    padding: 5px;
+    color: rgb(255, 255, 255);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    background-color: rgb(23, 28, 95);
+    border-radius: 5px;
+  }
+  .texto01 {
+    padding: 5px;
+    color: rgb(23, 28, 95);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 40px;
+  }
+  .texto02 {
+    padding: 5px;
+    color: rgb(102, 102, 102);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+  }
+  .texto03 {
+    padding: 5px;
+    color: rgb(63, 63, 63);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+  }
