@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { InicialDentistaComponent} from './inicial-dentista/inicial-dentista.component';
+import { InicialComponent} from './inicial/inicial.component';
 
 export const routes: Routes = [
     {path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -8,5 +9,6 @@ export const routes: Routes = [
     {path: 'register-dentist', loadComponent: () => import('./features/auth/register-dentist/register-dentist.component').then(m => m.RegisterDentistComponent)},
     {path: 'register-patient', loadComponent: () => import('./features/auth/register-patient/register-patient.component').then(m => m.RegisterPatientComponent)},
     {path: 'register-secretary', loadComponent: () => import('./features/auth/register-secretary/register-secretary.component').then(m => m.RegisterSecretaryComponent)},
-    {path: 'start-dentist', component: InicialDentistaComponent}
+    {path: 'start-dentist', component: InicialDentistaComponent},
+    {path: 'start', component: InicialComponent}
 ];
