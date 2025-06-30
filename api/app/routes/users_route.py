@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, _app_ctx_stack
 from app.services.users_service import UserService
 from app.services.consultas_service import ConsultaService
 from app.utils.token_auth import requires_auth
-from datetime import datetime, date, time
+from datetime import datetime, date, time, timedelta
 
 users_bp = Blueprint('users', __name__)
 
@@ -97,3 +97,31 @@ def listar_consultas():
             'paciente_id': c.paciente_id,
             'dentista_id': c.dentista_id
         })
+
+@users_bp.route('/consultas/proximas/<int:paciente_id>', methods=['GET'])
+def consultas_proximas(paciente_id):
+    agora = datetime.now()
+    limite = agora + timedelta(hours=48)
+
+    try:
+        consultas = Consulta.query.filter(
+            Consulta.paciente_id == paciente_id,
+            db.func.datetime(Consulta.data, Consulta.hora) >= agora,
+            db.func.datetime(Consulta.data, Consulta.hora) <= limite
+        ).order_by(Consulta.data, Consulta.hora).all()
+
+        resultado = []
+        for c in consultas:
+            resultado.append({
+                'id': c.id,
+                'data': c.data.strftime('%Y-%m-%d'),
+                'hora': c.hora.strftime('%H:%M'),
+                'observacoes': c.observacoes,
+                'status': c.status,
+                'dentista_id': c.dentista_id
+            })
+
+        return jsonify(resultado), 200
+
+    except Exception as e:
+        return jsonify({'erro': str(e)}), 400
