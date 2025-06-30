@@ -100,52 +100,17 @@ def listar_consultas():
 
 @users_bp.route('/consultas/proximas/<int:paciente_id>', methods=['GET'])
 def consultas_proximas(paciente_id):
-    agora = datetime.now()
-    limite = agora + timedelta(hours=48)
-
     try:
-        consultas = Consulta.query.filter(
-            Consulta.paciente_id == paciente_id,
-            db.func.datetime(Consulta.data, Consulta.hora) >= agora,
-            db.func.datetime(Consulta.data, Consulta.hora) <= limite
-        ).order_by(Consulta.data, Consulta.hora).all()
-
-        resultado = []
-        for c in consultas:
-            resultado.append({
-                'id': c.id,
-                'data': c.data.strftime('%Y-%m-%d'),
-                'hora': c.hora.strftime('%H:%M'),
-                'observacoes': c.observacoes,
-                'status': c.status,
-                'dentista_id': c.dentista_id
-            })
-
-        return jsonify(resultado), 200
-
+        consultas = ConsultaService.consultas_proximas(paciente_id)
+        return jsonify({'mensagem': consultas}), 200
     except Exception as e:
         return jsonify({'erro': str(e)}), 400
-
-
 
 @users_bp.route('/consultas/paciente/<int:paciente_id>', methods=['GET'])
 def listar_consultas_paciente(paciente_id):
     try:
-        consultas = Consulta.query.filter_by(paciente_id=paciente_id).order_by(Consulta.data.desc(), Consulta.hora.desc()).all()
-        
-        resultado = []
-        for c in consultas:
-            resultado.append({
-                'id': c.id,
-                'data': c.data.strftime('%Y-%m-%d'),
-                'hora': c.hora.strftime('%H:%M'),
-                'observacoes': c.observacoes,
-                'status': c.status,
-                'dentista_id': c.dentista_id
-            })
-
-        return jsonify(resultado), 200
-
+        consultas = ConsultaService.listar_consultas_paciente(paciente_id)
+        return jsonify({'mensagem': consultas}), 200
     except Exception as e:
         return jsonify({'erro': str(e)}), 500
     
@@ -158,23 +123,9 @@ def listar_consultas_por_data():
         return jsonify({'erro': 'Parâmetros dentista_id e data são obrigatórios.'}), 400
 
     try:
-        data = datetime.strptime(data_str, '%Y-%m-%d').date()
-        consultas = Consulta.query.filter_by(dentista_id=dentista_id, data=data).order_by(Consulta.hora.asc()).all()
-
-        resultado = []
-        for c in consultas:
-            resultado.append({
-                'id': c.id,
-                'data': c.data.strftime('%Y-%m-%d'),
-                'hora': c.hora.strftime('%H:%M'),
-                'observacoes': c.observacoes,
-                'status': c.status,
-                'paciente_id': c.paciente_id
-            })
-
-        return jsonify(resultado), 200
-
-    except ValueError:
-        return jsonify({'erro': 'Formato de data inválido. Use YYYY-MM-DD.'}), 400
+        consultas = ConsultaService.listar_consultas_por_data(dentista_id, data_str)
+        return jsonify({'mensagem': consultas}), 200
     except Exception as e:
         return jsonify({'erro': str(e)}), 500
+    except ValueError:
+        return jsonify({'erro': 'Formato de data inválido. Use YYYY-MM-DD.'}), 400
