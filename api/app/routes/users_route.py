@@ -148,3 +148,33 @@ def listar_consultas_paciente(paciente_id):
 
     except Exception as e:
         return jsonify({'erro': str(e)}), 500
+    
+@users_bp.route('/consultas/dentista', methods=['GET'])
+def listar_consultas_por_data():
+    dentista_id = request.args.get('dentista_id')
+    data_str = request.args.get('data')  # Esperado no formato 'YYYY-MM-DD'
+
+    if not dentista_id or not data_str:
+        return jsonify({'erro': 'Parâmetros dentista_id e data são obrigatórios.'}), 400
+
+    try:
+        data = datetime.strptime(data_str, '%Y-%m-%d').date()
+        consultas = Consulta.query.filter_by(dentista_id=dentista_id, data=data).order_by(Consulta.hora.asc()).all()
+
+        resultado = []
+        for c in consultas:
+            resultado.append({
+                'id': c.id,
+                'data': c.data.strftime('%Y-%m-%d'),
+                'hora': c.hora.strftime('%H:%M'),
+                'observacoes': c.observacoes,
+                'status': c.status,
+                'paciente_id': c.paciente_id
+            })
+
+        return jsonify(resultado), 200
+
+    except ValueError:
+        return jsonify({'erro': 'Formato de data inválido. Use YYYY-MM-DD.'}), 400
+    except Exception as e:
+        return jsonify({'erro': str(e)}), 500
