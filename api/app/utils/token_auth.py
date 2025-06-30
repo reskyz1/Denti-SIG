@@ -1,8 +1,9 @@
 from functools import wraps
 import datetime
-from flask import request,  _app_ctx_stack
+from flask import request, session
 import jwt
 import os
+from flask import jsonify
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -12,10 +13,10 @@ class AuthError(Exception):
         self.error = error
         self.status_code = status_code
 
-def generate_token(user_id):
+def generate_token(user_email):
     SECRET_KEY = os.getenv('SECRET_KEY')
     payload = {
-        'sub': user_id,
+        'sub': user_email,
         'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)  # Token expira em 1 hora
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
@@ -56,19 +57,20 @@ def get_token_auth_header():
     token = parts[1]
     return token
 
-def requires_auth(f):
-    """Determines if the access token is valid
-    """
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = get_token_auth_header()
-        try:
-            SECRET_KEY = os.getenv('SECRET_KEY')
-            payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-            _app_ctx_stack.top.current_user = payload  # temporarily storing the payload in memory, only during the processing of the current request.
-        except jwt.ExpiredSignatureError:
-            return None  # expire token
-        except jwt.InvalidTokenError:
-            return None  # invalid token
-        return f(*args, **kwargs)  # exe original func
-    return decorated
+def requires_auth():
+    def decorator(f):
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            token = get_token_auth_header()
+            try:
+                SECRET_KEY = os.getenv('SECRET_KEY')
+                payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+                user_email = session['user_email']
+                if user_email and payload.get("sub") != user_email:
+                    return f(*args, **kwargs) # Correct
+            except jwt.ExpiredSignatureError:
+                return jsonify({"message": "Token expired"}), 401
+            except jwt.InvalidTokenError:
+                return jsonify({"message": "Invalid token"}), 401
+        return decorated
+    return decorator

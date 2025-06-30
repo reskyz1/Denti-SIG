@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, _app_ctx_stack
+from flask import Blueprint, request, jsonify, session
 from app.services.users_service import UserService
 from app.services.consultas_service import ConsultaService
 from app.utils.token_auth import requires_auth
@@ -24,18 +24,19 @@ def register_patient():
 @users_bp.route('/login/ds', methods=['POST'])
 def login_dentist_secretary():
     data = request.json
+    session['user_email'] = data['email']
     return UserService.login_dentist_or_secretary(data['email'], data['senha'])
 
 @users_bp.route('/login/patient', methods=['POST'])
 def login_patient():
     data = request.json
+    session['user_email'] = data['email']
     return UserService.login_patient(data['email_cpf'], data['senha'])
 
 @users_bp.route('/login/get_dentist', methods=['GET'])
-@requires_auth
+@requires_auth()
 def get_dentist_session_id():
-    payload = _app_ctx_stack.top.current_user
-    return payload['sub']
+    return 'a'
 
 @users_bp.route('/dentistas', methods=['GET'])
 def listar_dentistas():
