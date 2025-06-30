@@ -125,3 +125,28 @@ def consultas_proximas(paciente_id):
 
     except Exception as e:
         return jsonify({'erro': str(e)}), 400
+
+from flask import jsonify
+from app.models.consulta import Consulta
+from app import db
+
+@users_bp.route('/consultas/paciente/<int:paciente_id>', methods=['GET'])
+def listar_consultas_paciente(paciente_id):
+    try:
+        consultas = Consulta.query.filter_by(paciente_id=paciente_id).order_by(Consulta.data.desc(), Consulta.hora.desc()).all()
+        
+        resultado = []
+        for c in consultas:
+            resultado.append({
+                'id': c.id,
+                'data': c.data.strftime('%Y-%m-%d'),
+                'hora': c.hora.strftime('%H:%M'),
+                'observacoes': c.observacoes,
+                'status': c.status,
+                'dentista_id': c.dentista_id
+            })
+
+        return jsonify(resultado), 200
+
+    except Exception as e:
+        return jsonify({'erro': str(e)}), 500
