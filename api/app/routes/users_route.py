@@ -126,9 +126,7 @@ def consultas_proximas(paciente_id):
     except Exception as e:
         return jsonify({'erro': str(e)}), 400
 
-from flask import jsonify
-from app.models.consulta import Consulta
-from app import db
+
 
 @users_bp.route('/consultas/paciente/<int:paciente_id>', methods=['GET'])
 def listar_consultas_paciente(paciente_id):
