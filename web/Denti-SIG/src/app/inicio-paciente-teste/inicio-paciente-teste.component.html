@@ -1,0 +1,90 @@
+<div class="header-container">
+  <div class="header-content">
+    <div class="logo-area">
+      <img src="assets/logo.png" alt="Logo Denti SIG" class="logo-img" />
+      <span class="site-name">Denti SIG</span>
+    </div>
+    <div class="header-buttons">
+      <button class="header-btn">Agenda</button>
+      <button class="header-btn">Pacientes</button>
+      <button class="header-btn">Financeiro</button>
+      <button class="header-btn">Estoque</button>
+    </div>
+    <div class="header-action">
+      <button class="header-btn action-btn">Conta</button>
+    </div>
+  </div>
+</div>
+
+<!-- Área principal: informações à esquerda, dentes e histórico à direita -->
+<div class="painel-row">
+  <!-- Coluna esquerda: Informações -->
+  <div class="painel-col info-col">
+    <div class="info-panel">
+      <h3>Informações</h3>
+      <div class="info-field">
+        <label>Código do paciente</label>
+        <output>{{ codigoPaciente }}</output>
+      </div>
+      <div class="info-field">
+        <label>Email</label>
+        <output>{{ email }}</output>
+      </div>
+      <div class="info-field">
+        <label>Celular</label>
+        <output>{{ celular }}</output>
+      </div>
+      <div class="info-field">
+        <label>Data de nascimento</label>
+        <output>{{ dataNascimento }}</output>
+      </div>
+      <div class="info-field">
+        <label>Gênero</label>
+        <output>{{ genero }}</output>
+      </div>
+      <div class="info-field">
+        <label>CPF</label>
+        <output>{{ cpf }}</output>
+      </div>
+      <div class="info-field">
+        <label>RG</label>
+        <output>{{ rg }}</output>
+      </div>
+      <div class="info-field">
+        <label>Endereço</label>
+        <output>{{ endereco }}</output>
+      </div>
+    </div>
+  </div>
+
+  <!-- Coluna direita: Dentes e Histórico empilhados -->
+  <div class="painel-col right-col">
+    <div class="dentes-panel">
+      <h3>Dentes Permanentes</h3>
+      <div class="dentes-img-wrapper">
+        <img src="assets/dentes-permanentes.png" alt="Dentes Permanentes" class="dentes-img" />
+      </div>
+    </div>
+    <div class="historico-panel">
+      <div class="historico-header">
+        <h3>Histórico de Consultas</h3>
+        <button class="historico-btn" (click)="irParaHistorico()">Ver tudo</button>
+      </div>
+      <div class="historico-output">
+        <div *ngIf="consultas.length === 0" class="sem-consultas">
+          Nenhuma consulta encontrada.
+        </div>
+        <div *ngFor="let consulta of consultas" class="consulta-item">
+          <span class="consulta-data">{{ consulta.data | date:'shortDate' }} {{ consulta.hora }}</span>
+          <span class="consulta-dentista">Dr(a). {{ consulta.dentista }}</span>
+          <span class="consulta-status" [ngClass]="{'finalizada': consulta.finalizada, 'andamento': !consulta.finalizada}">
+            {{ consulta.finalizada ? 'Finalizada' : 'Em andamento' }}
+          </span>
+          <button *ngIf="consulta.finalizada && consulta.relatorioIA" class="relatorio-btn">
+            Ver relatório IA
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

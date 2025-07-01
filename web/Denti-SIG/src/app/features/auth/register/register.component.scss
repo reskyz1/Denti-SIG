@@ -1,0 +1,48 @@
+.register_component{
+    text-align: center;
+    font-family: Arial, sans-serif;
+    padding-top: 100px;
+    color: #333;
+}
+
+
+.title{
+    h1{
+         color: #14516B;
+         font-size: 42px;
+         font-weight: bold;
+    }
+    h2{
+        color: #6d6c6c;
+        font-size: 38px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+}
+
+.register_component .card{
+    background-color: #E4E4E4;
+    padding: 30px;
+    width: 450px;
+    height: 270px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 15px;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
+    margin: 0 auto; 
+    margin-top: 50px;
+}
+
+.register_component .card button{
+  background-color: #5594CD; /* azul escuro */
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 70%; /* botão ocupa toda a largura do card */
+}

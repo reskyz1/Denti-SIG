@@ -1,0 +1,81 @@
+.register-dentist {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  padding-top: 60px;
+  color: #333;
+}
+
+.title h1 {
+  color: #14516B;
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.title h2 {
+  color: #6d6c6c;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 25px;
+}
+
+.card {
+  background-color: #e4e4e4;
+  padding: 30px;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+  border-radius: 6px;
+}
+
+.card label {
+  font-size: 14px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.card input[type="text"],
+.card input[type="email"],
+.card input[type="password"] {
+  background-color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.checkbox-container a {
+  color: #14516B;
+  text-decoration: none;
+}
+
+.checkbox-container a:hover {
+  text-decoration: underline;
+}
+
+.submit-btn {
+  margin-top: 10px;
+  background-color: #5594CD;
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+  background-color: #3b7bb1;
+}
