@@ -3,7 +3,7 @@ import { InicialDentistaComponent} from './inicial-dentista/inicial-dentista.com
 import { InicialComponent} from './inicial/inicial.component';
 
 export const routes: Routes = [
-    {path: '', redirectTo: 'login', pathMatch: 'full' },
+    {path: '', redirectTo: 'start', pathMatch: 'full' },
     {path: 'login', loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent) },
     {path: 'register', loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent)},
     {path: 'register-dentist', loadComponent: () => import('./features/auth/register-dentist/register-dentist.component').then(m => m.RegisterDentistComponent)},
