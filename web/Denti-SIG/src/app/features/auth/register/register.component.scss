@@ -46,3 +46,15 @@
   transition: background-color 0.3s;
   width: 70%; /* botão ocupa toda a largura do card */
 }
+
+.register_component .card a{
+    background-color: #5594CD; /* azul escuro */
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 70%; /* botão ocupa toda a largura do card */
+  }
