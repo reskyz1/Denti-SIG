@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-login',
@@ -12,17 +14,20 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 export class LoginComponent {
   loginForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private router: Router) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
     });
   }
 
+
   onSubmit() {
     if (this.loginForm.valid) {
       console.log('Login:', this.loginForm.value);
       // Aqui você pode implementar o envio pro backend
+
+      this.router.navigate(['/start']);
     }
   }
 }
