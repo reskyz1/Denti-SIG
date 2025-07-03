@@ -1,0 +1,58 @@
+<mat-card class="profile-header">
+  <div class="header-content">
+    <img class="avatar" src="assets/images/avatar-placeholder.png" alt="Foto do paciente">
+    <div class="patient-info">
+      <h2>{{ paciente.nome }}</h2>
+      <div class="sub-info">
+        <mat-icon>smartphone</mat-icon> {{ paciente.telefone }} 
+        &mdash; CPF: {{ paciente.cpf }}
+      </div>
+    </div>
+    <button mat-raised-button color="primary" class="edit-btn">Editar</button>
+  </div>
+  <mat-tab-group>
+    <mat-tab label="Visão Geral"></mat-tab>
+    <mat-tab label="Documento"></mat-tab>
+    <mat-tab label="Link"></mat-tab>
+  </mat-tab-group>
+</mat-card>
+
+<div class="profile-body">
+  <mat-card class="info-card">
+    <h3>Informações</h3>
+    <div class="info-grid">
+      <div><strong>Código do paciente:</strong> {{ paciente.id }}</div>
+      <div><strong>Data de nascimento:</strong> {{ paciente.nascimento | date }}</div>
+      <div><strong>Gênero:</strong> {{ paciente.genero }}</div>
+      <div><strong>CPF:</strong> {{ paciente.cpf }}</div>
+      <div><strong>RG:</strong> {{ paciente.rg }}</div>
+      <div><strong>Endereço:</strong> {{ paciente.endereco }}</div>
+      <div><strong>Preferência de lembretes:</strong> {{ paciente.lembretes }}</div>
+      <div><strong>Não receber:</strong> {{ paciente.naoReceber }}</div>
+      <div><strong>Observações:</strong> {{ paciente.observacoes }}</div>
+    </div>
+  </mat-card>
+
+  <mat-card class="teeth-card">
+    <h3>Dentes Permanentes</h3>
+    <img src="assets/images/dentes.jpeg" alt="Mapa de dentes">
+  </mat-card>
+</div>
+
+<div class="profile-footer">
+  <mat-card class="history-card">
+    <h3>Histórico de consultas</h3>
+    <button mat-icon-button color="primary"><mat-icon>add</mat-icon></button>
+    <ul>
+      <li *ngFor="let h of paciente.historico">{{ h }}</li>
+    </ul>
+  </mat-card>
+
+  <mat-card class="messages-card">
+    <h3>Mensagens</h3>
+    <p>{{ paciente.mensagem }}</p>
+    <button mat-icon-button color="warn"><mat-icon>cancel</mat-icon></button>
+    <button mat-icon-button color="accent"><mat-icon>check_circle</mat-icon></button>
+  </mat-card>
+</div>
+
