@@ -24,13 +24,13 @@ def register_patient():
 @users_bp.route('/login/ds', methods=['POST'])
 def login_dentist_secretary():
     data = request.json
-    session['user_email'] = data['email']
+    session['identificao'] = data['email']
     return UserService.login_dentist_or_secretary(data['email'], data['senha'])
 
 @users_bp.route('/login/patient', methods=['POST'])
 def login_patient():
     data = request.json
-    session['user_email'] = data['email']
+    session['identificao'] = data['email_cpf']
     return UserService.login_patient(data['email_cpf'], data['senha'])
 
 @users_bp.route('/login/get_dentist', methods=['GET'])

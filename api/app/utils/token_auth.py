@@ -60,17 +60,19 @@ def get_token_auth_header():
 def requires_auth():
     def decorator(f):
         @wraps(f)
-        def decorated(*args, **kwargs):
+        def wrapper(*args, **kwargs):
             token = get_token_auth_header()
             try:
-                SECRET_KEY = os.getenv('SECRET_KEY')
+                SECRET_KEY = str(os.getenv('jwt_SECRET_KEY'))
                 payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-                user_email = session['user_email']
-                if user_email and payload.get("sub") != user_email:
+                user_email = session['identificao']
+                if user_email and payload.get("sub") == user_email:
                     return f(*args, **kwargs) # Correct
+                else:
+                    return jsonify({"message": "Não tem usuario na sessao"}), 405
             except jwt.ExpiredSignatureError:
                 return jsonify({"message": "Token expired"}), 401
             except jwt.InvalidTokenError:
-                return jsonify({"message": "Invalid token"}), 401
-        return decorated
+                return jsonify({"message": f"Invalid token, {token}"}), 401
+        return wrapper
     return decorator
