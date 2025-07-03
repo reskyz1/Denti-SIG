@@ -20,6 +20,10 @@ def create_app():
     flask_app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
     flask_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+    KEY = str(os.getenv('app_SECRET_KEY'))
+    flask_app.secret_key = KEY
+    flask_app.config['SESSION_TYPE'] = 'filesystem'
+
     db.init_app(flask_app)
     migrate = Migrate()
 
