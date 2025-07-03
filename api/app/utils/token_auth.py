@@ -14,12 +14,12 @@ class AuthError(Exception):
         self.status_code = status_code
 
 def generate_token(user_email):
-    SECRET_KEY = os.getenv('SECRET_KEY')
+    KEY = str(os.getenv('jwt_SECRET_KEY'))
     payload = {
         'sub': user_email,
         'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)  # Token expira em 1 hora
     }
-    token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+    token = jwt.encode(payload, key=KEY, algorithm='HS256')
     return token
 
 
