@@ -3,10 +3,13 @@
 from app.models.consulta import Consulta
 from app import db
 from datetime import datetime, timedelta
+from api.app.utils.exceptions.permissao_negada import PermissaoNegada
 
 class ConsultaService:
     @staticmethod
-    def criar_consulta(data_dict):
+    def criar_consulta(data_dict, user_type):
+        if user_type not in ['paciente', 'secretario']:
+            raise PermissaoNegada("Somente pacientes ou secretários podem criar consultas.")
         validar_disponibilidade_consulta(data_dict['data'],data_dict['hora'], data_dict['dentista_id']) 
         nova = Consulta(
             data=datetime.strptime(data_dict['data'], '%Y-%m-%d').date(),

@@ -3,6 +3,7 @@ from app.services.users_service import UserService
 from app.services.consultas_service import ConsultaService
 from app.utils.token_auth import requires_auth
 from datetime import datetime, date, time, timedelta
+from api.app.utils.exceptions.permissao_negada import PermissaoNegada
 
 users_bp = Blueprint('users', __name__)
 
@@ -56,16 +57,19 @@ def paciente_por_cpf(cpf):
 
 @users_bp.route('/consultas', methods=['POST'])
 @requires_auth()
-def criar_consulta(user_id, user_type):
+def criar_consulta(user_type):
     try:
         dados = request.json
-        consulta = ConsultaService.criar_consulta(dados)
+        consulta = ConsultaService.criar_consulta(dados, user_type)
         return jsonify({'mensagem': 'Consulta criada com sucesso', 'id': consulta.id}), 201
+    except PermissaoNegada as e:
+        return jsonify({'erro': str(e)}), 403
     except Exception as e:
         return jsonify({'erro': str(e)}), 400
 
 @users_bp.route('/consultas/<int:id>', methods=['PUT'])
-def atualizar_consulta(id):
+@requires_auth()
+def atualizar_consulta(id, user_id, user_type):
     try:
         dados = request.json
         ConsultaService.atualizar_consulta(id, dados)

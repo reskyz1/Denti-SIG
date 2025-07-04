@@ -1,0 +1,2 @@
+class PermissaoNegada(Exception):
+    pass
