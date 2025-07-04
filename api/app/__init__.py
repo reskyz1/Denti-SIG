@@ -22,7 +22,6 @@ def create_app():
 
     KEY = str(os.getenv('app_SECRET_KEY'))
     flask_app.secret_key = KEY
-    flask_app.config['SESSION_TYPE'] = 'filesystem'
 
     db.init_app(flask_app)
     migrate = Migrate()

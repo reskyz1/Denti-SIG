@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, session
+from flask import Blueprint, request, jsonify
 from app.services.users_service import UserService
 from app.services.consultas_service import ConsultaService
 from app.utils.token_auth import requires_auth
@@ -24,13 +24,11 @@ def register_patient():
 @users_bp.route('/login/ds', methods=['POST'])
 def login_dentist_secretary():
     data = request.json
-    session['identificao'] = data['email']
     return UserService.login_dentist_or_secretary(data['email'], data['senha'])
 
 @users_bp.route('/login/patient', methods=['POST'])
 def login_patient():
     data = request.json
-    session['identificao'] = data['email_cpf']
     return UserService.login_patient(data['email_cpf'], data['senha'])
 
 @users_bp.route('/login/get_dentist', methods=['GET'])
@@ -57,7 +55,8 @@ def paciente_por_cpf(cpf):
         return jsonify({'erro': str(e)}), 400
 
 @users_bp.route('/consultas', methods=['POST'])
-def criar_consulta():
+@requires_auth()
+def criar_consulta(user_id, user_type):
     try:
         dados = request.json
         consulta = ConsultaService.criar_consulta(dados)
