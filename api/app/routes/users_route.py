@@ -32,11 +32,6 @@ def login_patient():
     data = request.json
     return UserService.login_patient(data['email_cpf'], data['senha'])
 
-@users_bp.route('/login/get_dentist', methods=['GET'])
-@requires_auth()
-def get_dentist_session_id():
-    return 'a'
-
 @users_bp.route('/dentistas', methods=['GET'])
 def listar_dentistas():
     lista = UserService.listar_dentistas()
@@ -72,16 +67,21 @@ def criar_consulta(user_type):
 def atualizar_consulta(id, user_id, user_type):
     try:
         dados = request.json
-        ConsultaService.atualizar_consulta(id, dados)
+        ConsultaService.atualizar_consulta(id, dados, user_type)
         return jsonify({'mensagem': 'Consulta atualizada com sucesso'})
+    except PermissaoNegada as e:
+        return jsonify({'erro': str(e)}), 403
     except Exception as e:
         return jsonify({'erro': str(e)}), 400
 
 @users_bp.route('/consultas/<int:id>', methods=['DELETE'])
-def deletar_consulta(id):
+@requires_auth()
+def deletar_consulta(id, user_type):
     try:
-        ConsultaService.deletar_consulta(id)
+        ConsultaService.deletar_consulta(id, user_type)
         return jsonify({'mensagem': 'Consulta deletada com sucesso'})
+    except PermissaoNegada as e:
+        return jsonify({'erro': str(e)}), 403
     except Exception as e:
         return jsonify({'erro': str(e)}), 400
     

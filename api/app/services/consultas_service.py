@@ -8,7 +8,7 @@ from api.app.utils.exceptions.permissao_negada import PermissaoNegada
 class ConsultaService:
     @staticmethod
     def criar_consulta(data_dict, user_type):
-        if user_type not in ['paciente', 'secretario']:
+        if user_type not in ['dentista', 'secretario']:
             raise PermissaoNegada("Somente pacientes ou secretários podem criar consultas.")
         validar_disponibilidade_consulta(data_dict['data'],data_dict['hora'], data_dict['dentista_id']) 
         nova = Consulta(
@@ -24,7 +24,9 @@ class ConsultaService:
         return nova
 
     @staticmethod
-    def atualizar_consulta(id, data_dict):
+    def atualizar_consulta(id, data_dict, user_type):
+        if user_type not in ['dentista', 'secretario']:
+            raise PermissaoNegada("Somente pacientes ou secretários podem criar consultas.")
         consulta = Consulta.query.get_or_404(id)
 
         # Mudar a data e o horario
@@ -55,7 +57,9 @@ class ConsultaService:
         return consulta
 
     @staticmethod
-    def deletar_consulta(id):
+    def deletar_consulta(id, user_type):
+        if user_type not in ['dentista', 'secretario']:
+            raise PermissaoNegada("Somente pacientes ou secretários podem criar consultas.")
         consulta = Consulta.query.get_or_404(id)
         db.session.delete(consulta)
         db.session.commit()
