@@ -133,3 +133,18 @@ def listar_consultas_por_data():
         return jsonify({'erro': str(e)}), 500
     except ValueError:
         return jsonify({'erro': 'Formato de data inválido. Use YYYY-MM-DD.'}), 400
+
+# Por medico e dia 
+@users_bp.route('/consultas/horarios/disponiveis', methods=['GET'])
+@requires_auth()
+def listar_horarios_diponiveis(user_type):
+    dados = request.json
+    try:
+        horarios = ConsultaService.listar_horarios_diponiveis(user_type, dados["dentista_id"], dia = dados["data"])
+        return jsonify({'mensagem': horarios}), 200
+    except PermissaoNegada as e:
+        return jsonify({'erro': str(e)}), 403
+    except Exception as e:
+        return jsonify({'erro': str(e)}), 400
+    except ValueError:
+        return jsonify({'erro': 'Formato de data inválido. Use YYYY-MM-DD.'}), 400
