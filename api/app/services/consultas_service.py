@@ -190,15 +190,21 @@ def criar_lista_horario(dia_base, dias: int = 7):
 def validar_disponibilidade_consulta(data, hora, dentista_id):
     """
     Raises:
-        HorarioDentistaError: Se não tiver horario disponivel.
+        HorarioDentistaError: Se não tiver horario disponivel ou não seguir o padrão de 30 min.
     """
+    dif = 30
+    possibilidades_hora = [p * dif for p in range((60/dif) - 1)]
+    # Consultas na mesma data
     query = Consulta.query.with_entities(Consulta.hora).filter(Consulta.data == data, Consulta.dentista_id == dentista_id).all()
     if query:
         for horario in query:
-            # não pode ser no mesmo horario e n pode ter menos de 30 min de diferença de outra consulta
+            # Não pode ser no mesmo horario e n pode ter menos de 30 min de diferença de outra consulta
             diferenca = (horario - hora)
-            if diferenca < 30 and  diferenca > -30:
+            if diferenca < dif and  diferenca > (-1)*dif:
                 raise HorarioDentistaError(f' horario indiponivel devido a agenda do Dentista', 400)
+            
+    if (hora.split(":")[1] not in possibilidades_hora):
+        raise HorarioDentistaError(f'Esta hora não segue o padrão de horarios de consulta', 400)
 
 class HorarioDentistaError(Exception):
     def __init__(self, error, status_code):
