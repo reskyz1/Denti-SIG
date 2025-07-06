@@ -103,7 +103,7 @@ class ConsultaService:
         dia = datetime.strptime(dia, '%Y-%m-%d').date()
         horarios = criar_lista_horario(dia, dias = 1)
         horarios_ind = Consulta.query.with_entities(Consulta.hora).filter(Consulta.data == dia, Consulta.dentista_id == dentista_id).all()
-        horarios_disp = [h for h in horarios if h not in horarios_ind]
+        horarios_disp = [hora for _, hora in horarios if hora not in horarios_ind]
         return horarios_disp
 
     @staticmethod
