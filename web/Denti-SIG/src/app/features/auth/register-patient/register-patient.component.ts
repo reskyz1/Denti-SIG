@@ -57,10 +57,16 @@ export class RegisterPatientComponent {
     }
 
     const dto: RegisterPatientDTO = {
-      ...this.form.value,
+      nome: this.form.value.nome,
+      email: this.form.value.email,
+      cpf: this.form.value.cpf,
+      telefone: this.form.value.telefone,
       senha: this.form.value.senha,
       data_nascimento: this.form.value.data_nascimento,
+      endereco: this.form.value.endereco,
+      sexo: this.form.value.sexo,
     };
+
 
     this.loading = true;
     this.usersApi.registerPatient(dto).subscribe({

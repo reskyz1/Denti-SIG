@@ -1,85 +1,73 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import {
-  ReactiveFormsModule,
-  FormBuilder,
-  Validators,
-  AbstractControl,
-  ValidationErrors,
-  FormGroup,
-} from '@angular/forms';
+<div class="register-patient" [formGroup]="form">
+  <div class="title">
+    <h1>DENTI SIG</h1>
+    <h2>Cadastro paciente</h2>
+  </div>
 
-import {
-  UsersApiService,
-  RegisterPatientDTO,
-} from '../../services/users-api.service';
+  <div class="card">
+    <label for="nome">Nome Completo</label>
+    <input id="nome" formControlName="nome" placeholder="Digite seu nome" />
+    <small *ngIf="hasError('nome','required')">Nome é obrigatório</small>
 
-/* ────────── Validator para confirmar senha ────────── */
-function senhaIgual(c: AbstractControl): ValidationErrors | null {
-  const senha = c.get('senha')?.value;
-  const confirmar = c.get('confirmarSenha')?.value;
-  return senha === confirmar ? null : { senhaDivergente: true };
-}
+    <label for="email">Email</label>
+    <input
+      id="email"
+      type="email"
+      formControlName="email"
+      placeholder="Digite seu email"
+    />
+    <small *ngIf="hasError('email','required')">Email é obrigatório</small>
+    <small *ngIf="hasError('email','email')">Email inválido</small>
 
-@Component({
-  selector: 'app-register-patient',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './register-patient.component.html',
-  styleUrl: './register-patient.component.scss',
-})
-export class RegisterPatientComponent {
-  private fb = inject(FormBuilder);
-  private usersApi = inject(UsersApiService);
+    <label for="cpf">CPF</label>
+    <input id="cpf" formControlName="cpf" placeholder="Digite seu CPF" />
+    <small *ngIf="hasError('cpf','required')">CPF é obrigatório</small>
 
-  /** flag para exibir spinner/disabled no botão */
-  loading = false;
+    <label for="senha">Senha</label>
+    <input
+      id="senha"
+      type="password"
+      formControlName="senha"
+      placeholder="Digite sua senha"
+    />
+    <small *ngIf="hasError('senha','required')">Senha é obrigatória</small>
 
-  form: FormGroup = this.fb.group(
-    {
-      nome: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      cpf: ['', Validators.required], // RG ⇢ backend espera CPF
-      senha: ['', [Validators.required, Validators.minLength(6)]],
-      confirmarSenha: ['', Validators.required],
-      data_nascimento: ['', Validators.required],
-      telefone: [''],
-      endereco: [''],
-      sexo: [''],
-      termos: [false, Validators.requiredTrue],
-    },
-    { validators: senhaIgual }
-  );
+    <label for="confirmarSenha">Confirmar Senha</label>
+    <input
+      id="confirmarSenha"
+      type="password"
+      formControlName="confirmarSenha"
+      placeholder="Confirme sua senha"
+    />
+    <small *ngIf="form.errors?.['senhaDivergente']">Senhas não conferem</small>
 
-  /* ───────────── Submit ───────────── */
-  onSubmit() {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
+    <label for="data_nascimento">Data de Nascimento</label>
+    <input
+      id="data_nascimento"
+      type="date"
+      formControlName="data_nascimento"
+    />
 
-    const dto: RegisterPatientDTO = {
-      ...this.form.value,
-      senha: this.form.value.senha,
-      data_nascimento: this.form.value.data_nascimento,
-    };
+    <label for="telefone">Telefone</label>
+    <input id="telefone" formControlName="telefone" />
 
-    this.loading = true;
-    this.usersApi.registerPatient(dto).subscribe({
-      next: (res) => {
-        alert(res.mensagem);
-        this.form.reset();
-      },
-      error: (err) => {
-        alert(err.error?.erro || 'Erro ao cadastrar paciente');
-      },
-      complete: () => (this.loading = false),
-    });
-  }
+    <label for="endereco">Endereço</label>
+    <input id="endereco" formControlName="endereco" />
 
-  /* Conveniência para checar erros no template */
-  hasError(ctrl: string, error: string) {
-    const c = this.form.get(ctrl);
-    return c?.touched && c?.hasError(error);
-  }
-}
+    <div class="checkbox-container">
+      <input type="checkbox" id="terms" formControlName="termos" />
+      <label for="terms"
+        >Confirmo que concordo com os <a href="#">termos</a></label
+      >
+      <small *ngIf="hasError('termos','required')">Aceite os termos</small>
+    </div>
+
+    <button
+      class="submit-btn"
+      (click)="onSubmit()"
+      [disabled]="loading || form.invalid"
+    >
+      {{ loading ? 'Enviando...' : 'Cadastrar' }}
+    </button>
+  </div>
+</div>

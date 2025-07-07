@@ -75,7 +75,7 @@ class UserService:
 
         try:
             # Converte string para objeto datetime.date
-            data_nascimento = datetime.strptime(data_nascimento, "%Y/%m/%d").date()
+            data_nascimento = datetime.strptime(data_nascimento, "%Y-%m-%d").date()
         except ValueError:
             return {'erro': 'Formato de data inválido. Use YYYY-MM-DD.'}, 400
 
