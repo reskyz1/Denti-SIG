@@ -3,6 +3,8 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": "./",
+    "allowJs": true,
     "outDir": "./dist/out-tsc",
     "strict": true,
     "noImplicitOverride": true,
