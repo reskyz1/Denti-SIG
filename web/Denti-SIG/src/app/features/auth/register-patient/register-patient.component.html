@@ -1,30 +1,85 @@
-<div class="register-patient">
-  <div class="title">
-    <h1>DENTI SIG</h1>
-    <h2>Cadastro paciente</h2>
-  </div>
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+  FormGroup,
+} from '@angular/forms';
 
-  <div class="card">
-    <label for="name">Nome Completo</label>
-    <input type="text" id="name" name="name" placeholder="Digite seu nome" />
+import {
+  UsersApiService,
+  RegisterPatientDTO,
+} from '../../services/users-api.service';
 
-    <label for="email">Email</label>
-    <input type="email" id="email" name="email" placeholder="Digite seu email" />
+/* ────────── Validator para confirmar senha ────────── */
+function senhaIgual(c: AbstractControl): ValidationErrors | null {
+  const senha = c.get('senha')?.value;
+  const confirmar = c.get('confirmarSenha')?.value;
+  return senha === confirmar ? null : { senhaDivergente: true };
+}
 
-    <label for="RG">RG</label>
-    <input type="text" id="cro" name="cro" placeholder="Digite seu RG" />
+@Component({
+  selector: 'app-register-patient',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
+  templateUrl: './register-patient.component.html',
+  styleUrl: './register-patient.component.scss',
+})
+export class RegisterPatientComponent {
+  private fb = inject(FormBuilder);
+  private usersApi = inject(UsersApiService);
 
-    <label for="password">Senha</label>
-    <input type="password" id="password" name="password" placeholder="Digite sua senha" />
+  /** flag para exibir spinner/disabled no botão */
+  loading = false;
 
-    <label for="confirm-password">Confirmar Senha</label>
-    <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirme sua senha" />
+  form: FormGroup = this.fb.group(
+    {
+      nome: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      cpf: ['', Validators.required], // RG ⇢ backend espera CPF
+      senha: ['', [Validators.required, Validators.minLength(6)]],
+      confirmarSenha: ['', Validators.required],
+      data_nascimento: ['', Validators.required],
+      telefone: [''],
+      endereco: [''],
+      sexo: [''],
+      termos: [false, Validators.requiredTrue],
+    },
+    { validators: senhaIgual }
+  );
 
-    <div class="checkbox-container">
-      <input type="checkbox" id="terms" />
-      <label for="terms">Confirmo que concordo com os <a href="#">termos</a></label>
-    </div>
+  /* ───────────── Submit ───────────── */
+  onSubmit() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
-    <button class="submit-btn">Cadastrar</button>
-  </div>
-</div>
+    const dto: RegisterPatientDTO = {
+      ...this.form.value,
+      senha: this.form.value.senha,
+      data_nascimento: this.form.value.data_nascimento,
+    };
+
+    this.loading = true;
+    this.usersApi.registerPatient(dto).subscribe({
+      next: (res) => {
+        alert(res.mensagem);
+        this.form.reset();
+      },
+      error: (err) => {
+        alert(err.error?.erro || 'Erro ao cadastrar paciente');
+      },
+      complete: () => (this.loading = false),
+    });
+  }
+
+  /* Conveniência para checar erros no template */
+  hasError(ctrl: string, error: string) {
+    const c = this.form.get(ctrl);
+    return c?.touched && c?.hasError(error);
+  }
+}
