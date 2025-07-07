@@ -38,7 +38,7 @@
   }
 
   .calendar-container {
-    background: #484747;
+    background: rgb(200, 200, 200);
     width: 320px;                
     border-radius: 10px;
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
@@ -102,7 +102,7 @@ header .calendar-current-date {
     height: 30px;               
     line-height: 30px;          
     font-size: 0.9rem;          
-    color: rgb(200, 200, 200);
+    color: rgb(100, 100, 100);
     margin-top: 20px;           
     position: relative;
     z-index: 1;
@@ -118,7 +118,7 @@ header .calendar-current-date {
 }
 
 .calendar-dates li.inactive {
-    color: rgb(100,100,100);
+    color: rgb(0,0,0);
     cursor: default;
 }
 
