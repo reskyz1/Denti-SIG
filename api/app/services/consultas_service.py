@@ -1,6 +1,7 @@
 # utils/consultas_utils.py
 
 from app.models.consulta import Consulta
+from app.models.paciente import Paciente
 from app import db
 from datetime import datetime, timedelta
 from api.app.utils.exceptions.permissao_negada import PermissaoNegada
@@ -160,7 +161,29 @@ class ConsultaService:
                 'paciente_id': c.paciente_id
             })
         return resultado
-
+    def prontuario_paciente(cpf, user_type):
+        if user_type not in ['dentista', 'secretario']:
+            raise PermissaoNegada("Somente pacientes ou secretários podem criar consultas.")
+        paciente = Paciente.query.filter_by(cpf=cpf).first()
+        if paciente:
+            consultas = Consulta.query.filter_by(paciente_id = paciente.id).order_by(Consulta.hora.asc()).all()
+            if consultas:
+                resultado = []
+                for c in consultas:
+                    resultado.append({
+                        'data': c.data.strftime('%Y-%m-%d'),
+                        'hora': c.hora.strftime('%H:%M'),
+                        'observacoes': c.observacoes,
+                    })
+                info_paciente = {'nome': paciente.nome, 
+                                 'data_nascimento' : paciente.data_nascimento, 
+                                 'sexo' : paciente.sexo}
+                
+                return(info_paciente,resultado)
+            else: 
+                raise Exception("Nenhnuma consulta encontrada para o paciente com esse id")
+        else:
+            raise Exception("Paciente não encontrado")
     
 def criar_lista_horario(dia_base, dias: int = 7):
     """

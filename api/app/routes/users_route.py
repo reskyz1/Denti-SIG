@@ -148,3 +148,15 @@ def listar_horarios_diponiveis(user_type):
         return jsonify({'erro': str(e)}), 400
     except ValueError:
         return jsonify({'erro': 'Formato de data inválido. Use YYYY-MM-DD.'}), 400
+
+@users_bp.route('/prontuario/<int:cpf>', methods=['DELETE'])
+@requires_auth()
+def prontuario_paciente(cpf, user_type):
+    try:
+        info_paciente, resultado = ConsultaService.prontuario_paciente(cpf, user_type)
+        return jsonify({'mensagem': (info_paciente, resultado)}), 200
+    except PermissaoNegada as e:
+        return jsonify({'erro': str(e)}), 403
+    except Exception as e:
+        return jsonify({'erro': str(e)}), 400
+    
