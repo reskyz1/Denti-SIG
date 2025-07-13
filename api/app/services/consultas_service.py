@@ -2,7 +2,7 @@
 
 from app.models.consulta import Consulta
 from app import db
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class ConsultaService:
     @staticmethod
@@ -86,6 +86,62 @@ class ConsultaService:
         horarios = criar_lista_horario(dia)
         horarios_disp = [h for h in horarios if h not in horarios_ind]
         return horarios_disp
+    
+    @staticmethod
+    def consultas_proximas(paciente_id):
+        agora = datetime.now()
+        limite = agora + timedelta(hours=48)
+
+        consultas = Consulta.query.filter(
+            Consulta.paciente_id == paciente_id,
+            db.func.datetime(Consulta.data, Consulta.hora) >= agora,
+            db.func.datetime(Consulta.data, Consulta.hora) <= limite
+        ).order_by(Consulta.data, Consulta.hora).all()
+
+        resultado = []
+        for c in consultas:
+            resultado.append({
+                'id': c.id,
+                'data': c.data.strftime('%Y-%m-%d'),
+                'hora': c.hora.strftime('%H:%M'),
+                'observacoes': c.observacoes,
+                'status': c.status,
+                'dentista_id': c.dentista_id
+            })
+
+        return resultado
+    @staticmethod
+    def listar_consultas_paciente(paciente_id):
+        consultas = Consulta.query.filter_by(paciente_id=paciente_id).order_by(Consulta.data.desc(), Consulta.hora.desc()).all()
+        
+        resultado = []
+        for c in consultas:
+            resultado.append({
+                'id': c.id,
+                'data': c.data.strftime('%Y-%m-%d'),
+                'hora': c.hora.strftime('%H:%M'),
+                'observacoes': c.observacoes,
+                'status': c.status,
+                'dentista_id': c.dentista_id
+            })
+        return resultado
+    
+    def listar_consultas_por_data(dentista_id, data_str):
+        data = datetime.strptime(data_str, '%Y-%m-%d').date()
+        consultas = Consulta.query.filter_by(dentista_id=dentista_id, data=data).order_by(Consulta.hora.asc()).all()
+
+        resultado = []
+        for c in consultas:
+            resultado.append({
+                'id': c.id,
+                'data': c.data.strftime('%Y-%m-%d'),
+                'hora': c.hora.strftime('%H:%M'),
+                'observacoes': c.observacoes,
+                'status': c.status,
+                'paciente_id': c.paciente_id
+            })
+        return resultado
+
     
 def criar_lista_horario(dia_base, dias: int = 7):
     """

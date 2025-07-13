@@ -1,30 +1,73 @@
-<div class="register-patient">
+<div class="register-patient" [formGroup]="form">
   <div class="title">
-    <h1>DENTI SIG</h1>
+    <h1>DENTI SIG</h1>
     <h2>Cadastro paciente</h2>
   </div>
 
   <div class="card">
-    <label for="name">Nome Completo</label>
-    <input type="text" id="name" name="name" placeholder="Digite seu nome" />
+    <label for="nome">Nome Completo</label>
+    <input id="nome" formControlName="nome" placeholder="Digite seu nome" />
+    <small *ngIf="hasError('nome','required')">Nome é obrigatório</small>
 
     <label for="email">Email</label>
-    <input type="email" id="email" name="email" placeholder="Digite seu email" />
+    <input
+      id="email"
+      type="email"
+      formControlName="email"
+      placeholder="Digite seu email"
+    />
+    <small *ngIf="hasError('email','required')">Email é obrigatório</small>
+    <small *ngIf="hasError('email','email')">Email inválido</small>
 
-    <label for="RG">RG</label>
-    <input type="text" id="cro" name="cro" placeholder="Digite seu RG" />
+    <label for="cpf">CPF</label>
+    <input id="cpf" formControlName="cpf" placeholder="Digite seu CPF" />
+    <small *ngIf="hasError('cpf','required')">CPF é obrigatório</small>
 
-    <label for="password">Senha</label>
-    <input type="password" id="password" name="password" placeholder="Digite sua senha" />
+    <label for="senha">Senha</label>
+    <input
+      id="senha"
+      type="password"
+      formControlName="senha"
+      placeholder="Digite sua senha"
+    />
+    <small *ngIf="hasError('senha','required')">Senha é obrigatória</small>
 
-    <label for="confirm-password">Confirmar Senha</label>
-    <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirme sua senha" />
+    <label for="confirmarSenha">Confirmar Senha</label>
+    <input
+      id="confirmarSenha"
+      type="password"
+      formControlName="confirmarSenha"
+      placeholder="Confirme sua senha"
+    />
+    <small *ngIf="form.errors?.['senhaDivergente']">Senhas não conferem</small>
+
+    <label for="data_nascimento">Data de Nascimento</label>
+    <input
+      id="data_nascimento"
+      type="date"
+      formControlName="data_nascimento"
+    />
+
+    <label for="telefone">Telefone</label>
+    <input id="telefone" formControlName="telefone" />
+
+    <label for="endereco">Endereço</label>
+    <input id="endereco" formControlName="endereco" />
 
     <div class="checkbox-container">
-      <input type="checkbox" id="terms" />
-      <label for="terms">Confirmo que concordo com os <a href="#">termos</a></label>
+      <input type="checkbox" id="terms" formControlName="termos" />
+      <label for="terms"
+        >Confirmo que concordo com os <a href="#">termos</a></label
+      >
+      <small *ngIf="hasError('termos','required')">Aceite os termos</small>
     </div>
 
-    <button class="submit-btn">Cadastrar</button>
+    <button
+      class="submit-btn"
+      (click)="onSubmit()"
+      [disabled]="loading || form.invalid"
+    >
+      {{ loading ? 'Enviando...' : 'Cadastrar' }}
+    </button>
   </div>
 </div>

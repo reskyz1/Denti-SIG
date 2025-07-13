@@ -1,8 +1,8 @@
-from flask import Blueprint, request, jsonify, _app_ctx_stack
+from flask import Blueprint, request, jsonify, session
 from app.services.users_service import UserService
 from app.services.consultas_service import ConsultaService
 from app.utils.token_auth import requires_auth
-from datetime import datetime, date, time
+from datetime import datetime, date, time, timedelta
 
 users_bp = Blueprint('users', __name__)
 
@@ -24,18 +24,19 @@ def register_patient():
 @users_bp.route('/login/ds', methods=['POST'])
 def login_dentist_secretary():
     data = request.json
+    session['user_email'] = data['email']
     return UserService.login_dentist_or_secretary(data['email'], data['senha'])
 
 @users_bp.route('/login/patient', methods=['POST'])
 def login_patient():
     data = request.json
+    session['user_email'] = data['email']
     return UserService.login_patient(data['email_cpf'], data['senha'])
 
 @users_bp.route('/login/get_dentist', methods=['GET'])
-@requires_auth
+@requires_auth()
 def get_dentist_session_id():
-    payload = _app_ctx_stack.top.current_user
-    return payload['sub']
+    return 'a'
 
 @users_bp.route('/dentistas', methods=['GET'])
 def listar_dentistas():
@@ -97,3 +98,35 @@ def listar_consultas():
             'paciente_id': c.paciente_id,
             'dentista_id': c.dentista_id
         })
+
+@users_bp.route('/consultas/proximas/<int:paciente_id>', methods=['GET'])
+def consultas_proximas(paciente_id):
+    try:
+        consultas = ConsultaService.consultas_proximas(paciente_id)
+        return jsonify({'mensagem': consultas}), 200
+    except Exception as e:
+        return jsonify({'erro': str(e)}), 400
+
+@users_bp.route('/consultas/paciente/<int:paciente_id>', methods=['GET'])
+def listar_consultas_paciente(paciente_id):
+    try:
+        consultas = ConsultaService.listar_consultas_paciente(paciente_id)
+        return jsonify({'mensagem': consultas}), 200
+    except Exception as e:
+        return jsonify({'erro': str(e)}), 500
+    
+@users_bp.route('/consultas/dentista', methods=['GET'])
+def listar_consultas_por_data():
+    dentista_id = request.args.get('dentista_id')
+    data_str = request.args.get('data')  # Esperado no formato 'YYYY-MM-DD'
+
+    if not dentista_id or not data_str:
+        return jsonify({'erro': 'Parâmetros dentista_id e data são obrigatórios.'}), 400
+
+    try:
+        consultas = ConsultaService.listar_consultas_por_data(dentista_id, data_str)
+        return jsonify({'mensagem': consultas}), 200
+    except Exception as e:
+        return jsonify({'erro': str(e)}), 500
+    except ValueError:
+        return jsonify({'erro': 'Formato de data inválido. Use YYYY-MM-DD.'}), 400

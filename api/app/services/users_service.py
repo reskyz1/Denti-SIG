@@ -4,7 +4,7 @@ from app.models.dentista import Dentista
 from app.models.paciente import Paciente
 from app.models.secretario import Secretario
 from app import db
-from api.app.utils.cpf_validator import validate_cpf
+from app.utils.cpf_validator import validate_cpf
 from app.utils.token_auth import generate_token
 
 
@@ -14,6 +14,9 @@ class UserService:
     def create_dentist(nome, email, cpf, telefone, senha, cro):
         if not all([nome, email, cpf, senha, cro]):
             return {'erro': 'Campos obrigatórios ausentes'}, 400
+
+        if not validate_cpf(cpf):
+            return {'erro': 'CPF inválido'}, 400
 
         if Dentista.query.filter((Dentista.email == email) | (Dentista.cpf == cpf)).first():
             return {'erro': 'Dentista já cadastrado'}, 409
@@ -37,6 +40,9 @@ class UserService:
     def create_secretary(nome, email, cpf, telefone, senha, matricula):
         if not all([nome, email, cpf, senha]):
             return {'erro': 'Campos obrigatórios ausentes'}, 400
+
+        if not validate_cpf(cpf):
+            return {'erro': 'CPF inválido'}, 400
 
         if Secretario.query.filter((Secretario.email == email) | (Secretario.cpf == cpf)).first():
             return {'erro': 'Secretário já cadastrado'}, 409
@@ -69,7 +75,7 @@ class UserService:
 
         try:
             # Converte string para objeto datetime.date
-            data_nascimento = datetime.strptime(data_nascimento, "%Y/%m/%d").date()
+            data_nascimento = datetime.strptime(data_nascimento, "%Y-%m-%d").date()
         except ValueError:
             return {'erro': 'Formato de data inválido. Use YYYY-MM-DD.'}, 400
 
@@ -97,7 +103,7 @@ class UserService:
         if not usuario or not check_password_hash(usuario.senha, senha):
             return {'erro': 'Credenciais inválidas'}, 401
         
-        token = generate_token(usuario.id)
+        token = generate_token(usuario.email)
         return {'mensagem': 'Login realizado com sucesso', 'token': token}, 200
 
     @staticmethod
@@ -110,7 +116,7 @@ class UserService:
         if not usuario or not check_password_hash(usuario.senha, senha):
             return {'erro': 'Credenciais inválidas'}, 401
 
-        token = generate_token(usuario.id)
+        token = generate_token(usuario.email)
         return {'mensagem': 'Login realizado com sucesso', 'token': token}, 200
     
     
