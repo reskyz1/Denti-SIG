@@ -15,6 +15,9 @@ const months = [
 
 let clickedDay = null;
 let selectedDayElement = null;
+let clickedHour = null;
+let clickedMinutes = null;
+let selectedHourElement = null;
 
 const manipulate = () => {
   let dayone = new Date(year, month, 1).getDay();
@@ -47,7 +50,28 @@ const manipulate = () => {
   currdate.innerText = `${months[month]} ${year}`;
   day.innerHTML = lit;
 
+  const allHours = document.querySelectorAll(".Hour-button")
+  allHours.forEach(li => {
+    
+      var tempclickedHour = parseInt(li.getAttribute('data-hour'));
+      var tempclickedMinutes = parseInt(li.getAttribute('data-minute'));
+      var UserTasks = checkTasksForDay(clickedDay,month,year,tempclickedHour,tempclickedMinutes);
+      if (UserTasks===null){
+        li.classList.add("Hour-Free");
+        li.classList.remove("Hour-Busy");
+        li.setAttribute("data-tarefas","");
+      }else{
+        li.classList.add("Hour-Busy");
+        li.classList.remove("Hour-Free");
+        li.setAttribute("data-tarefas",UserTasks);
+      }
+
+      console.log('Hora:', clickedHour);
+      console.log('Minutos:', clickedMinutes);
+  });
+  
   addClickListenersToDays();
+  addClickListenersToHours()
 };
 
 
@@ -64,7 +88,50 @@ function addClickListenersToDays() {
 
       clickedDay = parseInt(li.getAttribute('data-day'));
 
-      console.log('Clicked day:', clickedDay);
+      console.log('Dia:', clickedDay);
+      console.log('Més:', month+1);
+      console.log('Ano:', year);
+    });
+  });
+}
+
+function format2digits(n){
+  if (n===null){
+    return null;
+  }
+  return (n < 10) ? '0' + n.toString() : n.toString();
+}
+
+function checkTasksForDay(clickedday,month,year,clickedHour,clickedMinutes){
+
+  /* Colocar metodo para acessar o servidor e verificar se este horario tem alguma tarefa.
+  if (){
+    return (string de tarefas);
+  } 
+  */
+  return null /*retorna null se não tem */
+}
+
+function addClickListenersToHours(){
+  const allHours = document.querySelectorAll(".Hour-button")
+  allHours.forEach(li => {
+    li.addEventListener('click', () => {
+      if (selectedHourElement) {
+        selectedHourElement.classList.remove('selectedhour');
+      }
+
+      li.classList.add('selectedhour');
+      selectedHourElement = li;
+
+      clickedHour = parseInt(li.getAttribute('data-hour'));
+      clickedMinutes = parseInt(li.getAttribute('data-minute'));
+
+      console.log('Hora:', clickedHour);
+      console.log('Minutos:', clickedMinutes);
+
+      
+      document.getElementById("Agenda").innerHTML= "Mostrando conteudo agendado para "+format2digits(clickedDay)+"/"+format2digits(month+1)+"/"+year+" ás "+format2digits(clickedHour)+":"+format2digits(clickedMinutes)+" : ";
+      document.getElementById("AgendaInput").value = li.getAttribute("data-tarefas");
     });
   });
 }
@@ -89,3 +156,11 @@ prenexIcons.forEach(icon => {
     manipulate();
   });
 });
+function EditButtonAction(){
+  alert("enviando ao servidor: Tarefas para o dia "+format2digits(clickedDay)+"/"+format2digits(month+1)+"/"+year+" ás "+format2digits(clickedHour)+":"+format2digits(clickedMinutes)+" : "+document.getElementById("AgendaInput").value);
+  console.log("enviando ao servidor:");
+  console.log("Tarefas para o dia "+format2digits(clickedDay)+"/"+format2digits(month+1)+"/"+year+" ás "+format2digits(clickedHour)+":"+format2digits(clickedMinutes));
+  console.log(document.getElementById("AgendaInput").value)
+  /*mandar este valor ao servidor*/
+}
+document.getElementById("EditButton").setAttribute('onclick',"EditButtonAction()");
