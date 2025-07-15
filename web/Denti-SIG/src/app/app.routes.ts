@@ -4,9 +4,11 @@ import { InicialComponent} from './inicial/inicial.component';
 import { InicialSecretarioComponent} from './inicial-secretario/inicial-secretario.component';
 import { GerenciarAgendaComponent} from './gerenciar-agenda/gerenciar-agenda.component';
 import { FichaPacienteComponent } from './ficha-paciente/ficha-paciente.component';
+import { HeaderComponent } from './shared/header/header.component';
+import { InitialComponent } from './pages/initial/initial.component';
 
 export const routes: Routes = [
-    {path: '', redirectTo: 'start', pathMatch: 'full' },
+    {path: '', redirectTo: 'initial', pathMatch: 'full' },
     {path: 'login', loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent) },
     {path: 'register', loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent)},
     {path: 'register-dentist', loadComponent: () => import('./features/auth/register-dentist/register-dentist.component').then(m => m.RegisterDentistComponent)},
@@ -16,5 +18,6 @@ export const routes: Routes = [
     {path: 'start', component: InicialComponent},
     {path: 'start-secretary', component: InicialSecretarioComponent},
     {path: 'agenda', component: GerenciarAgendaComponent},
-    { path: 'ficha/:id', component: FichaPacienteComponent }
+    { path: 'ficha/:id', component: FichaPacienteComponent },
+    {path: 'initial', component: InitialComponent}
 ];

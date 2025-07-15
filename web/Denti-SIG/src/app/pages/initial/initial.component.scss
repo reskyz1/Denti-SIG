@@ -1,0 +1,24 @@
+.calendar{
+    margin-top: 100px;
+    background-color: white;
+    height: 300px;
+    width: 216px;
+    border: #f0f0f0;
+    border-radius: 12px;
+}
+
+.page-container {
+  background-color: #f0f0f0;
+  min-height: 100vh; // para ocupar toda a altura da tela
+  padding: 1rem;
+}
+
+.fixed-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000; // Garante que fique acima dos outros elementos
+  background-color: white; // Ou outra cor de fundo
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Sombra leve opcional
+}
