@@ -1,0 +1,28 @@
+<header class="header">
+  <div class="left-group">
+    <div class="logo">
+      <img src="/images/Logomarca.PNG" alt="Logo Denti SIG" />
+    </div>
+    <nav class="nav">
+      <button 
+         class="nav-btn" 
+         [ngClass]="{ 'active-btn': activeButton === 'agenda' }"
+         (click)="setActive('agenda')">
+         Agenda
+      </button>
+      <button 
+         class="nav-btn" 
+         [ngClass]="{ 'active-btn': activeButton === 'pacientes' }"
+         (click)="setActive('pacientes')">
+         Pacientes
+       </button>
+    </nav>
+  </div>
+
+  <div class = "account">
+    <button class="nav-btn">
+    <img src="/images/IconeConta.PNG" alt="icone do perfil" class="icon" />
+    Conta
+  </button>
+  </div>
+</header>
