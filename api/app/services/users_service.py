@@ -103,7 +103,11 @@ class UserService:
         if not usuario or not check_password_hash(usuario.senha, senha):
             return {'erro': 'Credenciais inválidas'}, 401
         
-        token = generate_token(usuario.email)
+        if isinstance(usuario, Dentista):
+            user_type = "dentista"
+        else:
+            user_type = "secretario"
+        token = generate_token(usuario.id, user_type)
         return {'mensagem': 'Login realizado com sucesso', 'token': token}, 200
 
     @staticmethod
@@ -116,7 +120,8 @@ class UserService:
         if not usuario or not check_password_hash(usuario.senha, senha):
             return {'erro': 'Credenciais inválidas'}, 401
 
-        token = generate_token(usuario.email)
+        user_type = "paciente"
+        token = generate_token(usuario.id, user_type)
         return {'mensagem': 'Login realizado com sucesso', 'token': token}, 200
     
     

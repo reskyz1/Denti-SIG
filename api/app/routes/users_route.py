@@ -1,8 +1,9 @@
-from flask import Blueprint, request, jsonify, session
+from flask import Blueprint, request, jsonify
 from app.services.users_service import UserService
 from app.services.consultas_service import ConsultaService
 from app.utils.token_auth import requires_auth
 from datetime import datetime, date, time, timedelta
+from api.app.utils.exceptions.permissao_negada import PermissaoNegada
 
 users_bp = Blueprint('users', __name__)
 
@@ -24,19 +25,12 @@ def register_patient():
 @users_bp.route('/login/ds', methods=['POST'])
 def login_dentist_secretary():
     data = request.json
-    session['user_email'] = data['email']
     return UserService.login_dentist_or_secretary(data['email'], data['senha'])
 
 @users_bp.route('/login/patient', methods=['POST'])
 def login_patient():
     data = request.json
-    session['user_email'] = data['email']
     return UserService.login_patient(data['email_cpf'], data['senha'])
-
-@users_bp.route('/login/get_dentist', methods=['GET'])
-@requires_auth()
-def get_dentist_session_id():
-    return 'a'
 
 @users_bp.route('/dentistas', methods=['GET'])
 def listar_dentistas():
@@ -57,28 +51,37 @@ def paciente_por_cpf(cpf):
         return jsonify({'erro': str(e)}), 400
 
 @users_bp.route('/consultas', methods=['POST'])
-def criar_consulta():
+@requires_auth()
+def criar_consulta(user_type):
     try:
         dados = request.json
-        consulta = ConsultaService.criar_consulta(dados)
+        consulta = ConsultaService.criar_consulta(dados, user_type)
         return jsonify({'mensagem': 'Consulta criada com sucesso', 'id': consulta.id}), 201
+    except PermissaoNegada as e:
+        return jsonify({'erro': str(e)}), 403
     except Exception as e:
         return jsonify({'erro': str(e)}), 400
 
 @users_bp.route('/consultas/<int:id>', methods=['PUT'])
-def atualizar_consulta(id):
+@requires_auth()
+def atualizar_consulta(id, user_id, user_type):
     try:
         dados = request.json
-        ConsultaService.atualizar_consulta(id, dados)
+        ConsultaService.atualizar_consulta(id, dados, user_type)
         return jsonify({'mensagem': 'Consulta atualizada com sucesso'})
+    except PermissaoNegada as e:
+        return jsonify({'erro': str(e)}), 403
     except Exception as e:
         return jsonify({'erro': str(e)}), 400
 
 @users_bp.route('/consultas/<int:id>', methods=['DELETE'])
-def deletar_consulta(id):
+@requires_auth()
+def deletar_consulta(id, user_type):
     try:
-        ConsultaService.deletar_consulta(id)
+        ConsultaService.deletar_consulta(id, user_type)
         return jsonify({'mensagem': 'Consulta deletada com sucesso'})
+    except PermissaoNegada as e:
+        return jsonify({'erro': str(e)}), 403
     except Exception as e:
         return jsonify({'erro': str(e)}), 400
     
@@ -130,3 +133,30 @@ def listar_consultas_por_data():
         return jsonify({'erro': str(e)}), 500
     except ValueError:
         return jsonify({'erro': 'Formato de data inválido. Use YYYY-MM-DD.'}), 400
+
+# Por medico e dia 
+@users_bp.route('/consultas/horarios/disponiveis', methods=['GET'])
+@requires_auth()
+def listar_horarios_diponiveis(user_type):
+    dados = request.json
+    try:
+        horarios = ConsultaService.listar_horarios_diponiveis(user_type, dados["dentista_id"], dia = dados["data"])
+        return jsonify({'mensagem': horarios}), 200
+    except PermissaoNegada as e:
+        return jsonify({'erro': str(e)}), 403
+    except Exception as e:
+        return jsonify({'erro': str(e)}), 400
+    except ValueError:
+        return jsonify({'erro': 'Formato de data inválido. Use YYYY-MM-DD.'}), 400
+
+@users_bp.route('/prontuario/<int:cpf>', methods=['DELETE'])
+@requires_auth()
+def prontuario_paciente(cpf, user_type):
+    try:
+        info_paciente, resultado = ConsultaService.prontuario_paciente(cpf, user_type)
+        return jsonify({'mensagem': (info_paciente, resultado)}), 200
+    except PermissaoNegada as e:
+        return jsonify({'erro': str(e)}), 403
+    except Exception as e:
+        return jsonify({'erro': str(e)}), 400
+    
