@@ -1,0 +1,36 @@
+<div class="ficha-paciente">
+  <h1>Ficha do Paciente</h1>
+
+  <section class="bloco">
+    <h2>Dados Pessoais</h2>
+    <p><strong>Nome:</strong> {{ paciente.nome }}</p>
+    <p><strong>CPF:</strong> {{ paciente.cpf }}</p>
+    <p><strong>Data de Nascimento:</strong> {{ paciente.nascimento }}</p>
+    <p><strong>Sexo:</strong> {{ paciente.sexo }}</p>
+    <p><strong>Estado Civil:</strong> {{ paciente.estadoCivil }}</p>
+    <p><strong>Endereço:</strong> {{ paciente.endereco }}</p>
+    <p><strong>Telefone:</strong> {{ paciente.telefone }}</p>
+    <p><strong>Email:</strong> {{ paciente.email }}</p>
+    <p *ngIf="paciente.responsavel"><strong>Responsável:</strong> {{ paciente.responsavel }}</p>
+  </section>
+
+  <hr />
+
+  <section class="bloco">
+    <h2>Anamnese</h2>
+    <p><strong>Doenças Crônicas:</strong> {{ anamnese.doencasCronicas.join(', ') }}</p>
+    <p><strong>Alergias:</strong> {{ anamnese.alergias.join(', ') }}</p>
+    <p><strong>Medicamentos em uso:</strong> {{ anamnese.medicamentos.join(', ') }}</p>
+    <p><strong>Cirurgias anteriores:</strong> {{ anamnese.cirurgias.join(', ') }}</p>
+    <p><strong>Condições cardíacas ou respiratórias:</strong> {{ anamnese.condicoes.join(', ') }}</p>
+    <p><strong>Última consulta odontológica:</strong> {{ anamnese.ultimaConsulta }}</p>
+    <p><strong>Problemas dentários anteriores:</strong> {{ anamnese.problemasDentarios.join(', ') }}</p>
+    <p><strong>Sensibilidade:</strong> {{ anamnese.sensibilidade }}</p>
+    <p><strong>Hábitos:</strong> {{ anamnese.habitos.join(', ') }}</p>
+    <p><strong>Higiene Bucal:</strong></p>
+    <ul>
+      <li><strong>Frequência de escovação:</strong> {{ anamnese.higieneBucal.escovacoes }}</li>
+      <li><strong>Uso de fio dental:</strong> {{ anamnese.higieneBucal.usoFioDental }}</li>
+    </ul>
+  </section>
+</div>

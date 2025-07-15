@@ -3,6 +3,7 @@ import { InicialDentistaComponent} from './inicial-dentista/inicial-dentista.com
 import { InicialComponent} from './inicial/inicial.component';
 import { InicialSecretarioComponent} from './inicial-secretario/inicial-secretario.component';
 import { GerenciarAgendaComponent} from './gerenciar-agenda/gerenciar-agenda.component';
+import { FichaPacienteComponent } from './ficha-paciente/ficha-paciente.component';
 
 export const routes: Routes = [
     {path: '', redirectTo: 'start', pathMatch: 'full' },
@@ -14,5 +15,6 @@ export const routes: Routes = [
     {path: 'start-dentist', component: InicialDentistaComponent},
     {path: 'start', component: InicialComponent},
     {path: 'start-secretary', component: InicialSecretarioComponent},
-    {path: 'agenda', component: GerenciarAgendaComponent}
+    {path: 'agenda', component: GerenciarAgendaComponent},
+    { path: 'ficha/:id', component: FichaPacienteComponent }
 ];
