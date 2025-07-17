@@ -4,6 +4,16 @@
   <mat-calendar class="calendar"></mat-calendar>
 
   <div class="full-calendar-container">
-    <full-calendar [options]="calendarOptions" ></full-calendar>
+   <full-calendar 
+   *ngIf="calendarOptions" 
+   [options]="calendarOptions"
+   [events]="[
+    {
+      title: 'Consulta com João',
+      start: '2025-07-17T09:00:00', 
+      end: '2025-07-17T10:30:00'    
+    },
+   ]"
+   ></full-calendar>
   </div>
 </div>
