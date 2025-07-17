@@ -95,35 +95,6 @@ class UserService:
         db.session.commit()
 
         return {'mensagem': 'Paciente cadastrado com sucesso'}, 201
-
-    @staticmethod
-    def login_dentist_or_secretary(email, senha):
-        usuario = Dentista.query.filter_by(email=email).first() or Secretario.query.filter_by(email=email).first()
-
-        if not usuario or not check_password_hash(usuario.senha, senha):
-            return {'erro': 'Credenciais inválidas'}, 401
-        
-        if isinstance(usuario, Dentista):
-            user_type = "dentista"
-        else:
-            user_type = "secretario"
-        token = generate_token(usuario.id, user_type)
-        return {'mensagem': 'Login realizado com sucesso', 'token': token}, 200
-
-    @staticmethod
-    def login_patient(email_ou_cpf, senha):
-        if validate_cpf(email_ou_cpf):
-            usuario = Paciente.query.filter_by(cpf=email_ou_cpf).first()
-        else:
-            usuario = Paciente.query.filter_by(email=email_ou_cpf).first()
-
-        if not usuario or not check_password_hash(usuario.senha, senha):
-            return {'erro': 'Credenciais inválidas'}, 401
-
-        user_type = "paciente"
-        token = generate_token(usuario.id, user_type)
-        return {'mensagem': 'Login realizado com sucesso', 'token': token}, 200
-    
     
     @staticmethod
     def listar_dentistas():

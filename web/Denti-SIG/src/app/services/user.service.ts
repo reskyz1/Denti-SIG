@@ -34,16 +34,6 @@ export interface RegisterPatientDTO {
   sexo?: string;
 }
 
-export interface LoginDSDTO {
-  email: string;
-  senha: string;
-}
-
-export interface LoginPatientDTO {
-  email_ou_cpf: string; // backend aceita email **ou** cpf
-  senha: string;
-}
-
 /*─────────────────────── Models (resposta) ─────────────*/
 export interface UsuarioToken {
   mensagem: string;
@@ -89,15 +79,6 @@ export class UsersApiService {
 
   registerPatient(dto: RegisterPatientDTO): Observable<MensagemResposta> {
     return this.http.post<MensagemResposta>(`${this.base}/register/patient`, dto);
-  }
-
-  /* ---------- Login ---------- */
-  loginDentistOrSecretary(dto: LoginDSDTO): Observable<UsuarioToken> {
-    return this.http.post<UsuarioToken>(`${this.base}/login/ds`, dto);
-  }
-
-  loginPatient(dto: LoginPatientDTO): Observable<UsuarioToken> {
-    return this.http.post<UsuarioToken>(`${this.base}/login/patient`, dto);
   }
 
   /* ---------- Listagens ---------- */

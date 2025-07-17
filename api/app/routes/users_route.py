@@ -22,16 +22,6 @@ def register_patient():
     data = request.json
     return UserService.create_patient(**data)
 
-@users_bp.route('/login/ds', methods=['POST'])
-def login_dentist_secretary():
-    data = request.json
-    return UserService.login_dentist_or_secretary(data['email'], data['senha'])
-
-@users_bp.route('/login/patient', methods=['POST'])
-def login_patient():
-    data = request.json
-    return UserService.login_patient(data['email_cpf'], data['senha'])
-
 @users_bp.route('/dentistas', methods=['GET'])
 def listar_dentistas():
     lista = UserService.listar_dentistas()
