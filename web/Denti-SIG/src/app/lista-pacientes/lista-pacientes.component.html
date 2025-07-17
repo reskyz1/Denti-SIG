@@ -1,9 +1,13 @@
 <div class="pacientes-container">
   <h2>Lista de Pacientes</h2>
 
-  <div *ngIf="pacientes?.length === 0">Nenhum paciente encontrado.</div>
+  <!-- Exibe mensagem quando a lista estiver vazia ou indefinida -->
+  <div *ngIf="!pacientes || pacientes.length === 0">
+    Nenhum paciente encontrado.
+  </div>
 
-  <div *ngIf="pacientes?.length > 0" class="lista">
+  <!-- Exibe lista quando há pacientes -->
+  <div *ngIf="pacientes && pacientes.length > 0" class="lista">
     <button *ngFor="let paciente of pacientes"
             (click)="abrirFicha(paciente)"
             class="paciente-btn">
