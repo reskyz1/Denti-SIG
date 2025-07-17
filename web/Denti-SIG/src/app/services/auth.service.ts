@@ -29,22 +29,28 @@ export class AuthService {
 
   login(dto: LoginDTO): Observable<UsuarioToken> {
     return this.http.post<UsuarioToken>(this.api, dto).pipe(
-      tap((res) => {
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('tipo', res.tipo);
-        localStorage.setItem('usuario', JSON.stringify(res.usuario));
+      tap({
+        next: (res) => {
+          localStorage.setItem('token', res.token);
+          localStorage.setItem('tipo', res.tipo);
+          localStorage.setItem('usuario', JSON.stringify(res.usuario));
 
-        // Redirecionamento
-        switch (res.tipo) {
-          case 'paciente':
-            this.router.navigate(['/paciente']);
-            break;
-          case 'dentista':
-            this.router.navigate(['/dentista']);
-            break;
-          case 'secretario':
-            this.router.navigate(['/secretario']);
-            break;
+          // Redirecionamento
+          switch (res.tipo) {
+            case 'paciente':
+              this.router.navigate(['/paciente']);
+              break;
+            case 'dentista':
+              this.router.navigate(['/dentista']);
+              break;
+            case 'secretario':
+              this.router.navigate(['/secretario']);
+              break;
+          }
+        },
+        error: (err) => {
+          // Lidar com o erro de autenticação
+          alert('Erro ao fazer login: ' + (err.error?.mensagem || 'Tente novamente'));
         }
       })
     );
