@@ -4,7 +4,7 @@ from app.models.consulta import Consulta
 from app.models.paciente import Paciente
 from app import db
 from datetime import datetime, timedelta
-from api.app.utils.exceptions.permissao_negada import PermissaoNegada
+from app.utils.exceptions.permissao_negada import PermissaoNegada
 
 class ConsultaService:
     @staticmethod

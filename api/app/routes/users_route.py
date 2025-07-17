@@ -3,7 +3,7 @@ from app.services.users_service import UserService
 from app.services.consultas_service import ConsultaService
 from app.utils.token_auth import requires_auth
 from datetime import datetime, date, time, timedelta
-from api.app.utils.exceptions.permissao_negada import PermissaoNegada
+from app.utils.exceptions.permissao_negada import PermissaoNegada
 
 users_bp = Blueprint('users', __name__)
 

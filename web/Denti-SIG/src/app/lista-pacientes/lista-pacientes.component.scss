@@ -1,0 +1,21 @@
+.pacientes-container {
+  padding: 16px;
+  max-width: 600px;
+  margin: auto;
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.paciente-btn {
+  padding: 10px;
+  background-color: #e3f2fd;
+  border: 1px solid #90caf9;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 16px;
+}

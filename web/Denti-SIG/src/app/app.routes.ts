@@ -6,6 +6,7 @@ import { GerenciarAgendaComponent} from './gerenciar-agenda/gerenciar-agenda.com
 import { FichaPacienteComponent } from './ficha-paciente/ficha-paciente.component';
 import { HeaderComponent } from './shared/header/header.component';
 import { InitialComponent } from './pages/initial/initial.component';
+import { PacientesListaComponent } from './lista-pacientes/lista-pacientes.component';
 
 export const routes: Routes = [
     {path: '', redirectTo: 'start', pathMatch: 'full' },
@@ -19,5 +20,6 @@ export const routes: Routes = [
     {path: 'start-secretary', component: InicialSecretarioComponent},
     {path: 'agenda', component: GerenciarAgendaComponent},
     {path: 'ficha/:id', component: FichaPacienteComponent },
-    {path: 'initial', component: InitialComponent}
+    {path: 'initial', component: InitialComponent},
+    {path: 'pacientes', component: PacientesListaComponent}
 ];
