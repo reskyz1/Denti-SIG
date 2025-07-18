@@ -1,17 +1,35 @@
-<div class="pacientes-container">
-  <h2>Lista de Pacientes</h2>
+<div class="pacientes-wrapper">
+  <div class="pacientes-container">
+    <h2>Lista de Pacientes</h2>
 
-  <!-- Exibe mensagem quando a lista estiver vazia ou indefinida -->
-  <div *ngIf="!pacientes || pacientes.length === 0">
-    Nenhum paciente encontrado.
-  </div>
+    <!-- Filtros -->
+    <div class="filtros">
+      <input
+        type="text"
+        placeholder="Filtrar por nome"
+        [(ngModel)]="filtroNome"
+        (input)="filtrarPacientes()" />
 
-  <!-- Exibe lista quando há pacientes -->
-  <div *ngIf="pacientes && pacientes.length > 0" class="lista">
-    <button *ngFor="let paciente of pacientes"
-            (click)="abrirFicha(paciente)"
-            class="paciente-btn">
-      {{ paciente.nome }} - {{ paciente.cpf }}
-    </button>
+      <input
+        type="text"
+        placeholder="Filtrar por CPF"
+        [(ngModel)]="filtroCpf"
+        (input)="filtrarPacientes()" />
+    </div>
+    <hr class="separador" />
+    <!-- Mensagem se nenhum encontrado -->
+    <div *ngIf="pacientesFiltrados.length === 0">
+      Nenhum paciente encontrado.
+    </div>
+
+    <!-- Lista -->
+    <div *ngIf="pacientesFiltrados.length > 0" class="lista">
+      <div *ngFor="let paciente of pacientesFiltrados"
+           (click)="abrirFicha(paciente)"
+           class="paciente-card">
+        <strong>{{ paciente.nome }}</strong><br>
+        <span>{{ paciente.cpf }}</span>
+      </div>
+    </div>
   </div>
 </div>
