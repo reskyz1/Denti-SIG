@@ -44,7 +44,7 @@ export class PacientesListaComponent implements OnInit {
     );
   }
 
-  abrirFicha(paciente: Paciente): void {
-    this.router.navigate(['/ficha', paciente.cpf]);
-  }
+abrirFicha(paciente: Paciente): void {
+  this.router.navigate(['/ficha', paciente.cpf]);
+}
 }

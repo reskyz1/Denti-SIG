@@ -19,7 +19,7 @@ export const routes: Routes = [
     {path: 'start', component: InicialComponent},
     {path: 'start-secretary', component: InicialSecretarioComponent},
     {path: 'agenda', component: GerenciarAgendaComponent},
-    {path: 'ficha/:id', component: FichaPacienteComponent },
+    {path: 'ficha/:cpf', component: FichaPacienteComponent },
     {path: 'initial', component: InitialComponent},
     {path: 'pacientes', component: PacientesListaComponent}
 ];

@@ -25,8 +25,8 @@
     <!-- Lista -->
     <div *ngIf="pacientesFiltrados.length > 0" class="lista">
       <div *ngFor="let paciente of pacientesFiltrados"
-           (click)="abrirFicha(paciente)"
-           class="paciente-card">
+          (click)="abrirFicha(paciente)"
+          class="paciente-card">
         <strong>{{ paciente.nome }}</strong><br>
         <span>{{ paciente.cpf }}</span>
       </div>
