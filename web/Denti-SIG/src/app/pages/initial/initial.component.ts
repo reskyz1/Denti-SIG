@@ -10,6 +10,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid'; 
 import ptLocale from '@fullcalendar/core/locales/pt-br';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
+import { EventInput } from '@fullcalendar/core';
 
 @Component({
   selector: 'app-initial',
@@ -30,7 +31,8 @@ import { isPlatformBrowser, CommonModule } from '@angular/common';
 export class InitialComponent {
   selectedDate: Date = new Date();
   calendarOptions: CalendarOptions | undefined;
-
+  eventList?: EventInput[]
+  
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     if (isPlatformBrowser(this.platformId)) {
       this.calendarOptions = {
@@ -47,4 +49,6 @@ export class InitialComponent {
       };
     }
   }
+
+ 
 }
