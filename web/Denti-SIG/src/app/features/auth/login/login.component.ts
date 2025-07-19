@@ -25,9 +25,8 @@ export class LoginComponent {
   onSubmit() {
     if (this.loginForm.valid) {
       console.log('Login:', this.loginForm.value);
-      // Aqui você pode implementar o envio pro backend
 
-      this.router.navigate(['/start-dentist']);
+      this.router.navigate(['/initial']);
     }
   }
 }
