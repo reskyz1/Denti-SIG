@@ -12,6 +12,8 @@ import ptLocale from '@fullcalendar/core/locales/pt-br';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { EventInput } from '@fullcalendar/core';
 import { Dentista } from 'src/app/models/dentista';
+import { AgendarConsultaComponent } from 'src/app/shared/agendar-consulta/agendar-consulta.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-initial',
@@ -23,7 +25,8 @@ import { Dentista } from 'src/app/models/dentista';
     MatInputModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    FullCalendarModule
+    FullCalendarModule,
+    AgendarConsultaComponent,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './initial.component.html',
@@ -34,9 +37,10 @@ export class InitialComponent {
   calendarOptions: CalendarOptions | undefined;
   eventList?: EventInput[];
   dentistas: Dentista[] = [];
-  dentistaSelecionado?: Dentista 
+  dentistaSelecionado?: Dentista
+  popUp: boolean = false
   
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object,private dialog: MatDialog) {
     if (isPlatformBrowser(this.platformId)) {
       this.calendarOptions = {
         initialView: 'timeGridWeek',
@@ -99,7 +103,17 @@ export class InitialComponent {
   }
 
   abrirPopupConsulta() {
-  console.log("Abrir popup de marcação de consulta");
-  // futuro: abrir modal de cadastro
+  if (!this.popUp) {
+    this.popUp = true;
+    const dialogRef = this.dialog.open(AgendarConsultaComponent, {
+      width: '650px',
+      panelClass: 'custom-modal'
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.popUp = false; 
+    });
+  }
 }
+
 }

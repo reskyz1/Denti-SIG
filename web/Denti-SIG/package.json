@@ -29,6 +29,7 @@
     "@fullcalendar/timegrid": "^6.1.18",
     "@tailwindcss/postcss": "^4.1.8",
     "express": "^4.18.2",
+    "ngx-mask": "^19.0.7",
     "postcss": "^8.5.4",
     "rxjs": "~7.8.0",
     "tailwindcss": "^4.1.8",

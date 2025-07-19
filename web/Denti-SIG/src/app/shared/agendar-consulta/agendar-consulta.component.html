@@ -1,0 +1,59 @@
+<div class="modal-wrapper">
+  <h2 class="modal-title">Agendar consulta</h2>
+
+  <div class="form-group">
+    <label>Dentista</label>
+    <mat-form-field appearance="outline" class="custom-field">
+      <mat-select [(ngModel)]="dentistaSelecionado">
+        <mat-option *ngFor="let d of dentistas" [value]="d">{{ d.nome }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="form-group">
+    <label>Paciente</label>
+    <mat-form-field appearance="outline" class="custom-field">
+      <input matInput placeholder="Busque por nome, telefone, CPF ou cadastre um novo paciente" [(ngModel)]="paciente">
+    </mat-form-field>
+  </div>
+
+  <div class="field-row">
+    <div class="form-group">
+      <label>Data da consulta</label>
+      <mat-form-field appearance="outline" class="field">
+        <input matInput [matDatepicker]="picker" [(ngModel)]="dataConsulta">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <div class="form-group">
+      <label>Horário</label>
+      <mat-form-field appearance="outline" class="field">
+        <input matInput type="time" [(ngModel)]="horaConsulta">
+      </mat-form-field>
+    </div>
+
+    <div class="form-group">
+      <label>Duração</label>
+      <mat-form-field appearance="outline" class="field">
+        <input matInput type="number" [(ngModel)]="duracaoConsulta">
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Observações</label>
+    <mat-form-field appearance="outline" class="custom-field">
+      <textarea matInput placeholder="Adicione observações sobre esta consulta" [(ngModel)]="observacoes" rows="2"></textarea>
+    </mat-form-field>
+  </div>
+
+  <div class="footer">
+    <button mat-stroked-button type="button" (click)="cancelar()">Cancelar</button>
+    <button mat-flat-button color="primary" type="button" (click)="agendar()">
+      <mat-icon>check</mat-icon>
+      Agendar consulta
+    </button>
+  </div>
+</div>
