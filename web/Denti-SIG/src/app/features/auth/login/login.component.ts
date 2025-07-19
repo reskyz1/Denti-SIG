@@ -28,7 +28,6 @@ export class LoginComponent {
       this.authService.login({ email: username, senha: password, tipo: type }).subscribe({
         next: (response) => {
           console.log('Login bem-sucedido', response);
-          this.router.navigate([`/${type}`]);
         },
         error: (err) => {
           console.error('Erro no login', err);

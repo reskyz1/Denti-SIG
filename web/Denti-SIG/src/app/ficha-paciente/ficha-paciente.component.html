@@ -4,14 +4,15 @@
   <!-- Bloco de Dados Pessoais -->
   <section class="bloco" *ngIf="paciente">
     <h2>Dados Pessoais</h2>
-    <p><strong>Nome:</strong> {{ paciente?.nome }}</p>
-    <p><strong>CPF:</strong> {{ paciente?.cpf }}</p>
-    <p><strong>Data de Nascimento:</strong> {{ paciente?.data_nascimento }}</p>
-    <p><strong>Sexo:</strong> {{ paciente?.sexo }}</p>
-    <p><strong>Endereço:</strong> {{ paciente?.endereco }}</p>
-    <p><strong>Telefone:</strong> {{ paciente?.telefone }}</p>
-    <p><strong>Email:</strong> {{ paciente?.email }}</p>
-    <p *ngIf="paciente?.responsavel"><strong>Responsável:</strong> {{ paciente?.responsavel }}</p>
+    <p><strong>Nome:</strong> {{ paciente.nome }}</p>
+    <p><strong>CPF:</strong> {{ paciente.cpf }}</p>
+    <p><strong>Data de Nascimento:</strong> {{ paciente.data_nascimento }}</p>
+    <p><strong>Sexo:</strong> {{ paciente.sexo }}</p>
+    <p><strong>Estado Civil:</strong> {{ paciente.estadoCivil }}</p>
+    <p><strong>Endereço:</strong> {{ paciente.endereco }}</p>
+    <p><strong>Telefone:</strong> {{ paciente.telefone }}</p>
+    <p><strong>Email:</strong> {{ paciente.email }}</p>
+    <p *ngIf="paciente?.responsavel"><strong>Responsável:</strong> {{ paciente.responsavel }}</p>
   </section>
 
   <hr />

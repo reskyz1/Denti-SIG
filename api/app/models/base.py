@@ -1,5 +1,6 @@
 from datetime import datetime
 from app import db
+from werkzeug.security import check_password_hash
 
 class BaseModel(db.Model):
     __abstract__ = True  # não cria tabela para isso
@@ -13,3 +14,6 @@ class BaseModel(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     deleted_at = db.Column(db.DateTime, nullable=True)
     is_active = db.Column(db.Boolean, default=True)
+
+    def check_password(self, password):
+        return check_password_hash(self.senha, password)
