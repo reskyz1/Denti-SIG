@@ -7,12 +7,8 @@ import { AgendarConsultaComponent } from './agendar-consulta/agendar-consulta.co
 
 @NgModule({
   declarations: [
-    HeaderComponent,
-
   ],
   exports: [
-    HeaderComponent,
-
   ],
   imports: [
     CommonModule
