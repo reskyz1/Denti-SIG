@@ -34,23 +34,6 @@ export interface RegisterPatientDTO {
   sexo?: string;
 }
 
-export interface LoginDSDTO {
-  email: string;
-  senha: string;
-  tipo: string;
-}
-
-export interface LoginDTO{
-  email: String;
-  senha: String;
-  tipo: String
-}
-
-export interface LoginPatientDTO {
-  email_ou_cpf: string; 
-  senha: string;
-}
-
 /*─────────────────────── Models (resposta) ─────────────*/
 export interface UsuarioToken {
   mensagem: string;
