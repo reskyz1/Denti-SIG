@@ -127,4 +127,4 @@ class UserService:
     
     @staticmethod
     def paciente_por_cpf(cpf):
-        return Paciente.query.get_or_404(cpf)
+        return Paciente.query.filter_by(cpf=cpf).first_or_404()
