@@ -34,6 +34,23 @@ export interface RegisterPatientDTO {
   sexo?: string;
 }
 
+export interface LoginDSDTO {
+  email: string;
+  senha: string;
+  tipo: string;
+}
+
+export interface LoginDTO{
+  email: String;
+  senha: String;
+  tipo: String
+}
+
+export interface LoginPatientDTO {
+  email_ou_cpf: string; 
+  senha: string;
+}
+
 /*─────────────────────── Models (resposta) ─────────────*/
 export interface UsuarioToken {
   mensagem: string;
@@ -51,6 +68,7 @@ export interface Dentista {
   data_nascimento: string;
   telefone?: string;
   especialidade?: string;
+  cro?: string;
 }
 
 export interface Paciente {
@@ -69,7 +87,8 @@ export interface Paciente {
   queixa_principal?: string;           // Queixa principal do paciente, opcional
   historico_tratamento_odontologico?: string; // Histórico de tratamentos odontológicos, opcional
   higiene_bucal?: string;              // Informações sobre higiene bucal, opcional
-  observacoes_gerais?: string;         // Observações gerais, opcional
+  observacoes_gerais?: string;
+  estadoCivil?: String;        // Observações gerais, opcional
 
   problema_cardiaco?: boolean;         // Se o paciente tem problema cardíaco
   diabetico?: boolean;                 // Se o paciente é diabético

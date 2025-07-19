@@ -102,10 +102,10 @@ class UserService:
         lista = []
         for d in dentista:
             lista.append({
+                "id": d.id,
                 "nome": d.nome,
                 "email": d.email,
                 "cpf": d.cpf,
-                "data_nascimento": str(d.data_nascimento),
                 "telefone": d.telefone,
                 "especialidade": d.especialidade
             })

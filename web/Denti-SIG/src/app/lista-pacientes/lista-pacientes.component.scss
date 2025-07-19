@@ -7,6 +7,16 @@
   padding-top: 100px; // espaço abaixo do cabeçalho
 }
 
+.fixed-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000; // Garante que fique acima dos outros elementos
+  background-color: white; // Ou outra cor de fundo
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Sombra leve opcional
+}
+
 .pacientes-container {
   width: 100%;
   max-width: 600px;

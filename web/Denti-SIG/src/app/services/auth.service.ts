@@ -11,9 +11,8 @@ export interface LoginDTO {
   tipo: 'paciente' | 'dentista' | 'secretario';
 }
 
-export interface UsuarioToken {
-  token: string;
-  tipo: string;
+export interface LoginResponse{
+  tipo: 'dentista' | 'paciente' | 'secretario'; 
   usuario: {
     id: number;
     nome: string;
@@ -27,24 +26,23 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  login(dto: LoginDTO): Observable<UsuarioToken> {
-    return this.http.post<UsuarioToken>(this.api, dto).pipe(
+  login(dto: LoginDTO): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(this.api, dto).pipe(
       tap({
         next: (res) => {
-          localStorage.setItem('token', res.token);
           localStorage.setItem('tipo', res.tipo);
           localStorage.setItem('usuario', JSON.stringify(res.usuario));
 
           // Redirecionamento
           switch (res.tipo) {
             case 'paciente':
-              this.router.navigate(['/paciente']);
+              this.router.navigate(['/initial']);
               break;
             case 'dentista':
-              this.router.navigate(['/dentista']);
+              this.router.navigate(['/initial']);
               break;
             case 'secretario':
-              this.router.navigate(['/secretario']);
+              this.router.navigate(['/initial']);
               break;
           }
         },

@@ -4,11 +4,12 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // <-- necessário para ngModel
 import { RouterModule } from '@angular/router';
+import { HeaderComponent } from '../shared/header/header.component';
 
 @Component({
   selector: 'app-lista-pacientes',
   standalone: true, // <-- marca como standalone
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule,HeaderComponent],
   templateUrl: './lista-pacientes.component.html',
   styleUrls: ['./lista-pacientes.component.scss']
 })

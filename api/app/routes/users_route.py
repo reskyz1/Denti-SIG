@@ -4,6 +4,9 @@ from app.services.consultas_service import ConsultaService
 from app.utils.token_auth import requires_auth
 from datetime import datetime, date, time, timedelta
 from app.utils.exceptions.permissao_negada import PermissaoNegada
+from app.models.dentista import Dentista
+from app.models.paciente import Paciente
+from app.models.secretario import Secretario
 
 users_bp = Blueprint('users', __name__)
 
@@ -21,6 +24,38 @@ def register_secretary():
 def register_patient():
     data = request.json
     return UserService.create_patient(**data)
+
+
+@users_bp.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    email = data.get('email')
+    senha = data.get('senha')
+    tipo = data.get('tipo')  # 'paciente', 'dentista' ou 'secretario'
+
+    user = None
+
+    if tipo == 'paciente':
+        user = Paciente.query.filter_by(email=email).first()
+    elif tipo == 'dentista':
+        user = Dentista.query.filter_by(email=email).first()
+    elif tipo == 'secretario':
+        user = Secretario.query.filter_by(email=email).first()
+    else:
+        return jsonify({'message': 'Tipo de usuário inválido'}), 400
+
+    if not user or not user.check_password(senha):
+        return jsonify({'message': 'Email ou senha inválidos'}), 401
+
+    return jsonify({
+        'tipo': tipo,
+        'usuario': {
+            'id': user.id,
+            'nome': user.nome,
+            'email': user.email
+        }
+    })
+
 
 @users_bp.route('/dentistas', methods=['GET'])
 def listar_dentistas():
