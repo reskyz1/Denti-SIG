@@ -1,4 +1,33 @@
-  <app-header class = "fixed-header"></app-header>
+<app-header class="fixed-header"></app-header>
+
 <div class="page-container">
-  <mat-calendar class="calendar"></mat-calendar>
+  <div class = "left-part">
+    <mat-calendar class="calendar"></mat-calendar>
+  <details class = "colapsable">
+    <summary>Agenda</summary>
+    <p *ngFor = "let dentista of dentistas"
+     (click)= "selecionarDentista(dentista)" 
+     [ngClass] = "{ 'selecionado': dentista === dentistaSelecionado}"
+     >
+     {{dentista.nome}} 
+    </p>
+    <p style="font-weight: 300;">+ adicionar dentista</p>
+  </details>
+  </div>
+  
+
+  <div class="full-calendar-container">
+  <full-calendar 
+    *ngIf="calendarOptions" 
+    [options]="calendarOptions"
+    [events]="[
+      {
+        title: 'Consulta com João',
+        start: '2025-07-17T09:00:00', 
+        end: '2025-07-17T10:30:00'    
+      },
+    ]"
+  ></full-calendar>
+  <button class="botao-add-consulta" (click)="abrirPopupConsulta()">+</button>
+</div>
 </div>

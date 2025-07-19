@@ -1,0 +1,83 @@
+.modal-wrapper {
+  width: 560px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-family: 'Inter', sans-serif;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-weight: 500;
+    font-size: 14px;
+    color: #374151;
+  }
+
+  .mat-form-field {
+    margin: 0;
+  }
+}
+
+.custom-field {
+  width: 100%;
+
+  .mat-form-field-outline {
+    border-radius: 8px;
+  }
+
+  .mat-form-field-infix {
+    padding: 12px 14px !important;
+  }
+}
+
+.field-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  .form-group {
+    flex: 1;
+  }
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+
+  button {
+    font-weight: 500;
+    text-transform: none;
+    border-radius: 8px;
+    padding: 8px 18px;
+  }
+
+  .mat-flat-button {
+    background-color: #1662dd;
+    color: white;
+  }
+
+  .mat-stroked-button {
+    border-color: #d1d5db;
+    color: #374151;
+  }
+
+  .mat-icon {
+    font-size: 18px;
+    margin-right: 4px;
+  }
+}
