@@ -31,7 +31,7 @@ def login():
     data = request.get_json()
     email = data.get('email')
     senha = data.get('senha')
-    tipo = data.get('tipo')  # 'paciente', 'dentista' ou 'secretario'
+    tipo = data.get('tipo')  
 
     user = None
 
