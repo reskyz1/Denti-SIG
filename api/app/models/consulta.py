@@ -7,6 +7,7 @@ class Consulta(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     data = db.Column(db.Date, nullable=False)
     hora = db.Column(db.Time, nullable=False)
+    duracao = db.Colum(db.Interger, nullable=False)
     observacoes = db.Column(db.Text)
     status = db.Column(db.String(20), default='agendada')
 
