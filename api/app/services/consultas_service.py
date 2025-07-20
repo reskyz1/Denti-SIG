@@ -3,14 +3,14 @@
 from app.models.consulta import Consulta
 from app.models.paciente import Paciente
 from app import db
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from app.utils.exceptions.permissao_negada import PermissaoNegada
 
 class ConsultaService:
     @staticmethod
     def criar_consulta(data_dict, user_type):
         if user_type not in ['dentista', 'secretario']:
-            raise PermissaoNegada("Somente pacientes ou secretários podem criar consultas.")
+            raise PermissaoNegada("Somente desntistas ou secretários podem criar consultas.")
         validar_disponibilidade_consulta(data_dict['data'],data_dict['hora'], data_dict['dentista_id']) 
         nova = Consulta(
             data=datetime.strptime(data_dict['data'], '%Y-%m-%d').date(),
@@ -210,24 +210,37 @@ def criar_lista_horario(dia_base, dias: int = 7):
 
     return lista
 
-def validar_disponibilidade_consulta(data, hora, dentista_id):
+def validar_disponibilidade_consulta(data, hora, dentista_id):  
     """
     Raises:
-        HorarioDentistaError: Se não tiver horario disponivel ou não seguir o padrão de 30 min.
+        HorarioDentistaError: Se não tiver horário disponível ou não seguir o padrão de 30 min.
     """
-    dif = 30
-    possibilidades_hora = [p * dif for p in range((60/dif) - 1)]
-    # Consultas na mesma data
-    query = Consulta.query.with_entities(Consulta.hora).filter(Consulta.data == data, Consulta.dentista_id == dentista_id).all()
-    if query:
-        for horario in query:
-            # Não pode ser no mesmo horario e n pode ter menos de 30 min de diferença de outra consulta
-            diferenca = (horario - hora)
-            if diferenca < dif and  diferenca > (-1)*dif:
-                raise HorarioDentistaError(f' horario indiponivel devido a agenda do Dentista', 400)
-            
-    if (hora.split(":")[1] not in possibilidades_hora):
-        raise HorarioDentistaError(f'Esta hora não segue o padrão de horarios de consulta', 400)
+    # Garantir que 'hora' seja um objeto datetime.time
+    if isinstance(hora, str):
+        hora = datetime.strptime(hora, "%H:%M").time()
+
+    dif = 30  # diferença mínima em minutos
+    possibilidades_hora = [p * dif for p in range(int(60 // dif))]  # [0, 30]
+
+    # Consultas na mesma data com o mesmo dentista
+    query = Consulta.query.with_entities(Consulta.hora).filter(
+        Consulta.data == data,
+        Consulta.dentista_id == dentista_id
+    ).all()
+
+    for row in query:
+        hora_existente = row[0]  # extrai datetime.time de dentro da Row
+        diferenca = abs((
+            datetime.combine(date.min, hora_existente) - 
+            datetime.combine(date.min, hora)
+        ).total_seconds() / 60)
+
+        if diferenca < dif:
+            raise HorarioDentistaError("Horário indisponível devido à agenda do dentista.", 400)
+
+    # Verifica se o horário segue padrão de 30 em 30 minutos
+    if hora.minute not in possibilidades_hora:
+        raise HorarioDentistaError("Esta hora não segue o padrão de horários de consulta.", 400)
 
 class HorarioDentistaError(Exception):
     def __init__(self, error, status_code):

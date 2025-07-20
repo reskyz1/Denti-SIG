@@ -1,4 +1,4 @@
-import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, PLATFORM_ID, OnInit } from '@angular/core';
 import { HeaderComponent } from 'src/app/shared/header/header.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,9 +11,11 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import ptLocale from '@fullcalendar/core/locales/pt-br';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { EventInput } from '@fullcalendar/core';
-import { Dentista } from 'src/app/models/dentista';
+import { Dentista } from 'src/app/services/user.service';
 import { AgendarConsultaComponent } from 'src/app/shared/agendar-consulta/agendar-consulta.component';
 import { MatDialog } from '@angular/material/dialog';
+import {UsersApiService} from 'src/app/services/user.service';
+
 
 @Component({
   selector: 'app-initial',
@@ -32,7 +34,7 @@ import { MatDialog } from '@angular/material/dialog';
   templateUrl: './initial.component.html',
   styleUrls: ['./initial.component.scss'],
 })
-export class InitialComponent {
+export class InitialComponent implements OnInit{
   selectedDate: Date = new Date();
   calendarOptions: CalendarOptions | undefined;
   eventList?: EventInput[];
@@ -40,7 +42,7 @@ export class InitialComponent {
   dentistaSelecionado?: Dentista
   popUp: boolean = false
   
-  constructor(@Inject(PLATFORM_ID) private platformId: Object,private dialog: MatDialog) {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object,private dialog: MatDialog, private userService: UsersApiService) {
     if (isPlatformBrowser(this.platformId)) {
       this.calendarOptions = {
         initialView: 'timeGridWeek',
@@ -55,47 +57,6 @@ export class InitialComponent {
        height: 'auto'
       };
     }
-
-    const dentista1 : Dentista = {
-      nome: "Luis Felipe",
-      email: "luismarinho501@gmail.com",
-      cpf: "70336034440",
-      telefone: "(81)983089297",
-      senha: "12345678",
-      cro: "123",
-      id:1
-    };
-    const dentista2: Dentista = {
-      nome: "Ana Beatriz",
-      email: "ana.bia@clinic.com",
-      cpf: "12345678900",
-      telefone: "(81)981234567",
-      senha: "senhaAna123",
-      cro: "456",
-      id: 2
-    };
-
-    const dentista3: Dentista = {
-      nome: "Carlos Eduardo",
-      email: "carlos.edu@clinic.com",
-      cpf: "98765432100",
-      telefone: "(81)982345678",
-      senha: "carlos2025",
-      cro: "789",
-      id: 3
-    };
-
-    const dentista4: Dentista = {
-      nome: "Juliana Costa",
-      email: "juliana.costa@clinic.com",
-      cpf: "11223344556",
-      telefone: "(81)980123456",
-      senha: "julianaSecure!",
-      cro: "321",
-      id: 4
-    };
-
-    this.dentistas?.push(dentista1,dentista2,dentista3,dentista4)
   }
 
   selecionarDentista(dentista: Dentista){
@@ -115,5 +76,40 @@ export class InitialComponent {
     });
   }
 }
+
+  ngOnInit(): void {
+  this.userService.listarDentistas().subscribe({
+    next: (res) => {
+      this.dentistas = res;
+
+      if (isPlatformBrowser(this.platformId)) {
+        const tipoUsuario = localStorage.getItem('tipo');
+        const usuarioJson = localStorage.getItem('usuario');
+
+        let dentista: Dentista | undefined;
+
+        if (tipoUsuario === 'dentista' && usuarioJson) {
+          const usuario = JSON.parse(usuarioJson);
+          for (const d of this.dentistas) {
+            if (d.id === usuario.id) {
+              dentista = d;
+              break;
+            }
+          }
+        } else {
+          dentista = this.dentistas[0];
+        }
+
+        if (dentista) {
+          this.selecionarDentista(dentista);
+        }
+      }
+    },
+    error: (error) => {
+      console.error('erro ao buscar os dentistas', error);
+    }
+  });
+}
+
 
 }

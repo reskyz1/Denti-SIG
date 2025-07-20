@@ -45,6 +45,7 @@ export interface MensagemResposta {
 }
 
 export interface Dentista {
+  id: number;
   nome: string;
   email: string;
   cpf: string;

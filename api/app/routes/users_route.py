@@ -2,11 +2,13 @@ from flask import Blueprint, request, jsonify
 from app.services.users_service import UserService
 from app.services.consultas_service import ConsultaService
 from app.utils.token_auth import requires_auth
-from datetime import datetime, date, time, timedelta
+from datetime import datetime, date, time, timedelta, timezone
 from app.utils.exceptions.permissao_negada import PermissaoNegada
 from app.models.dentista import Dentista
 from app.models.paciente import Paciente
 from app.models.secretario import Secretario
+import jwt
+import os
 
 users_bp = Blueprint('users', __name__)
 
@@ -47,7 +49,16 @@ def login():
     if not user or not user.check_password(senha):
         return jsonify({'message': 'Email ou senha inválidos'}), 401
 
+    # Gerar token
+    SECRET_KEY = os.getenv('jwt_SECRET_KEY') or 'sua_chave_segura'
+    token = jwt.encode({
+        'id': user.id,
+        'type': tipo,
+        'exp': datetime.now(timezone.utc) + timedelta(hours=2)
+    }, SECRET_KEY, algorithm='HS256')
+
     return jsonify({
+        'token': token,
         'tipo': tipo,
         'usuario': {
             'id': user.id,
@@ -75,11 +86,18 @@ def paciente_por_cpf(cpf):
     except Exception as e:
         return jsonify({'erro': str(e)}), 400
 
+
+
+
 @users_bp.route('/consultas', methods=['POST'])
 @requires_auth()
 def criar_consulta(user_type):
     try:
         dados = request.json
+
+        print("dados recebidos:", dados)
+        print("tipo dos campos:", {k: type(v) for k, v in dados.items()})
+
         consulta = ConsultaService.criar_consulta(dados, user_type)
         return jsonify({'mensagem': 'Consulta criada com sucesso', 'id': consulta.id}), 201
     except PermissaoNegada as e:

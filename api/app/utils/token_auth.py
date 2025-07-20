@@ -71,7 +71,7 @@ def requires_auth():
             sig = inspect.signature(f)
             params = sig.parameters
             try:
-                SECRET_KEY = str(os.getenv('jwt_SECRET_KEY'))
+                SECRET_KEY = os.getenv('jwt_SECRET_KEY') or 'sua_chave_segura'
                 payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
                 if "user_id" in params:
                     if "user_id" not in kwargs:
