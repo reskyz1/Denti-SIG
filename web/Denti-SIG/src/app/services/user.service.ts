@@ -134,6 +134,10 @@ export class UsersApiService {
   pacientePorCpf(cpf: string | number): Observable<Paciente> {
     return this.http.get<Paciente>(`${this.base}/pacientes/${cpf}`);
   }
+    
+  editarPacienteInfoMedica(cpf: string, dados: Partial<Paciente>): Observable<MensagemResposta> {
+    return this.http.put<MensagemResposta>(`${this.base}/paciente/${cpf}`, dados);
+  }
 }
 
 /*──────────────────── ConsultasApiService ───────────────────*/

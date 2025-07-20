@@ -185,3 +185,7 @@ def prontuario_paciente(cpf, user_type):
     except Exception as e:
         return jsonify({'erro': str(e)}), 400
     
+@users_bp.route('/paciente/<string:cpf>', methods=['PUT'])
+def atualizar_info_medica_paciente(cpf):
+    dados = request.get_json()
+    return UserService.editar_paciente_info_medica(cpf, dados)

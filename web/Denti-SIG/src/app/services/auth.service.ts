@@ -59,10 +59,6 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  getToken(): string | null {
-    return localStorage.getItem('token');
-  }
-
   getTipo(): string | null {
     return localStorage.getItem('tipo');
   }
@@ -73,6 +69,6 @@ export class AuthService {
   }
 
   isLogado(): boolean {
-    return !!this.getToken();
+    return !!this.getUsuario();
   }
 }

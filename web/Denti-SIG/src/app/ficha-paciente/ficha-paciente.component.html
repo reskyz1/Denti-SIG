@@ -1,38 +1,106 @@
 <div class="ficha-paciente">
   <h1>Ficha do Paciente</h1>
 
-  <!-- Bloco de Dados Pessoais -->
+  <!-- Botões -->
+  <div class="botoes" *ngIf="paciente">
+    <button *ngIf="!editando" (click)="iniciarEdicao()">Editar</button>
+    <ng-container *ngIf="editando">
+      <button (click)="salvar()">Salvar</button>
+      <button (click)="cancelarEdicao()">Cancelar</button>
+    </ng-container>
+  </div>
+
   <section class="bloco" *ngIf="paciente">
     <h2>Dados Pessoais</h2>
-    <p><strong>Nome:</strong> {{ paciente.nome }}</p>
-    <p><strong>CPF:</strong> {{ paciente.cpf }}</p>
-    <p><strong>Data de Nascimento:</strong> {{ paciente.data_nascimento }}</p>
-    <p><strong>Sexo:</strong> {{ paciente.sexo }}</p>
-    <p><strong>Estado Civil:</strong> {{ paciente.estadoCivil }}</p>
-    <p><strong>Endereço:</strong> {{ paciente.endereco }}</p>
-    <p><strong>Telefone:</strong> {{ paciente.telefone }}</p>
-    <p><strong>Email:</strong> {{ paciente.email }}</p>
-    <p *ngIf="paciente?.responsavel"><strong>Responsável:</strong> {{ paciente.responsavel }}</p>
+    <ng-container *ngIf="!editando; else edicaoDados">
+      <p><strong>Nome:</strong> {{ paciente.nome }}</p>
+      <p><strong>CPF:</strong> {{ paciente.cpf }}</p>
+      <p><strong>Data de Nascimento:</strong> {{ paciente.data_nascimento }}</p>
+      <p><strong>Sexo:</strong> {{ paciente.sexo }}</p>
+      <p><strong>Estado Civil:</strong> {{ paciente.estadoCivil }}</p>
+      <p><strong>Endereço:</strong> {{ paciente.endereco }}</p>
+      <p><strong>Telefone:</strong> {{ paciente.telefone }}</p>
+      <p><strong>Email:</strong> {{ paciente.email }}</p>
+      <p *ngIf="paciente?.responsavel"><strong>Responsável:</strong> {{ paciente.responsavel }}</p>
+    </ng-container>
+
+    <ng-template #edicaoDados>
+      <!-- Dados pessoais sem edição -->
+      <p><strong>Nome:</strong> {{ paciente.nome }}</p>
+      <p><strong>CPF:</strong> {{ paciente.cpf }}</p>
+      <p><strong>Data de Nascimento:</strong> {{ paciente.data_nascimento }}</p>
+      <p><strong>Sexo:</strong> {{ paciente.sexo }}</p>
+      <p><strong>Estado Civil:</strong> {{ paciente.estadoCivil }}</p>
+      <p><strong>Endereço:</strong> {{ paciente.endereco }}</p>
+      <p><strong>Telefone:</strong> {{ paciente.telefone }}</p>
+      <p><strong>Email:</strong> {{ paciente.email }}</p>
+      <p *ngIf="paciente?.responsavel"><strong>Responsável:</strong> {{ paciente.responsavel }}</p>
+    </ng-template>
   </section>
 
   <hr />
 
-  <!-- Bloco de Anamnese -->
-  <section class="bloco" *ngIf="anamnese">
+  <section class="bloco" *ngIf="paciente">
     <h2>Anamnese</h2>
-    <p><strong>Doenças Crônicas:</strong> {{ anamnese?.doencasCronicas.join(', ') }}</p>
-    <p><strong>Alergias:</strong> {{ anamnese?.alergias.join(', ') }}</p>
-    <p><strong>Medicamentos em uso:</strong> {{ anamnese?.medicamentos.join(', ') }}</p>
-    <p><strong>Cirurgias anteriores:</strong> {{ anamnese?.cirurgias.join(', ') }}</p>
-    <p><strong>Condições cardíacas ou respiratórias:</strong> {{ anamnese?.condicoes.join(', ') }}</p>
-    <p><strong>Última consulta odontológica:</strong> {{ anamnese?.ultimaConsulta }}</p>
-    <p><strong>Problemas dentários anteriores:</strong> {{ anamnese?.problemasDentarios.join(', ') }}</p>
-    <p><strong>Sensibilidade:</strong> {{ anamnese?.sensibilidade }}</p>
-    <p><strong>Hábitos:</strong> {{ anamnese?.habitos.join(', ') }}</p>
-    <p><strong>Higiene Bucal:</strong></p>
-    <ul>
-      <li><strong>Frequência de escovação:</strong> {{ anamnese?.higieneBucal.escovacoes }}</li>
-      <li><strong>Uso de fio dental:</strong> {{ anamnese?.higieneBucal.usoFioDental }}</li>
-    </ul>
+    <ng-container *ngIf="!editando; else edicaoAnamnese">
+      <p><strong>Doenças Crônicas:</strong> {{ anamnese?.doencasCronicas.join(', ') }}</p>
+      <p><strong>Alergias:</strong> {{ anamnese?.alergias.join(', ') }}</p>
+      <p><strong>Medicamentos em uso:</strong> {{ anamnese?.medicamentos.join(', ') }}</p>
+      <p><strong>Condições:</strong> {{ anamnese?.condicoes.join(', ') }}</p>
+      <p><strong>Última consulta odontológica:</strong> {{ anamnese?.ultimaConsulta }}</p>
+      <p><strong>Sensibilidade:</strong> {{ anamnese?.sensibilidade }}</p>
+      <p><strong>Hábitos:</strong> {{ anamnese?.habitos.join(', ') }}</p>
+      <p><strong>Higiene Bucal:</strong></p>
+      <ul>
+        <li><strong>Frequência de escovação:</strong> {{ anamnese?.higieneBucal.escovacoes }}</li>
+        <li><strong>Uso de fio dental:</strong> {{ anamnese?.higieneBucal.usoFioDental }}</li>
+      </ul>
+      <p><strong>Observações:</strong> {{ anamnese?.observacoes.join(', ') }}</p>
+    </ng-container>
+
+    <ng-template #edicaoAnamnese>
+      <label>Doenças Crônicas: <input [(ngModel)]="paciente.doencas_cronicas" /></label><br />
+      <label>Alergias: <input [(ngModel)]="paciente.alergias" /></label><br />
+      <label>Medicamentos em uso: <input [(ngModel)]="paciente.medicacoes_uso_continuo" /></label><br />
+      <label>Higiene Bucal: <input [(ngModel)]="paciente.higiene_bucal" /></label><br />
+      <label>Observações: <input [(ngModel)]="paciente.observacoes_gerais" /></label><br />
+
+      <div class="checkbox-group">
+        <label>
+          <input type="checkbox" [(ngModel)]="paciente.fumante" />
+          Fumante
+        </label>
+      </div>
+      <div class="checkbox-group">
+        <label>
+          <input type="checkbox" [(ngModel)]="paciente.diabetico" />
+          Diabético
+        </label>
+      </div>
+      <div class="checkbox-group">
+        <label>
+          <input type="checkbox" [(ngModel)]="paciente.problema_cardiaco" />
+          Problema Cardíaco
+        </label>
+      </div>
+      <div class="checkbox-group">
+        <label>
+          <input type="checkbox" [(ngModel)]="paciente.gestante" />
+          Gestante
+        </label>
+      </div>
+      <div class="checkbox-group">
+        <label>
+          <input type="checkbox" [(ngModel)]="paciente.aparelho_ortodontico" />
+          Aparelho Ortodôntico
+        </label>
+      </div>
+      <div class="checkbox-group">
+        <label>
+          <input type="checkbox" [(ngModel)]="paciente.usa_protese" />
+          Usa Prótese
+        </label>
+      </div>
+    </ng-template>
   </section>
 </div>
