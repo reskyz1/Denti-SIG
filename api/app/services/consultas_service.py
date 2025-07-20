@@ -12,14 +12,19 @@ class ConsultaService:
         if user_type not in ['dentista', 'secretario']:
             raise PermissaoNegada("Somente desntistas ou secretários podem criar consultas.")
         validar_disponibilidade_consulta(data_dict['data'],data_dict['hora'], data_dict['dentista_id']) 
-        nova = Consulta(
-            data=datetime.strptime(data_dict['data'], '%Y-%m-%d').date(),
-            hora=datetime.strptime(data_dict['hora'], '%H:%M').time(),
-            observacoes=data_dict.get('observacoes'),
-            status=data_dict.get('status', 'agendada'),
-            paciente_id=data_dict['paciente_id'],
-            dentista_id=data_dict['dentista_id']
-        )
+        duracao=data_dict.get('duracao')
+
+        # Padrao de multiplo de 30 min
+        if duracao%30 == 0:
+            nova = Consulta(
+                data=datetime.strptime(data_dict['data'], '%Y-%m-%d').date(),
+                hora=datetime.strptime(data_dict['hora'], '%H:%M').time(),
+                duracao=duracao,
+                observacoes=data_dict.get('observacoes'),
+                status=data_dict.get('status', 'agendada'),
+                paciente_id=data_dict['paciente_id'],
+                dentista_id=data_dict['dentista_id']
+            )
         db.session.add(nova)
         db.session.commit()
         return nova
@@ -45,6 +50,11 @@ class ConsultaService:
             if data_dict['hora'] != consulta.hora:
                 validar_disponibilidade_consulta(consulta.data,data_dict['hora'], consulta.dentista_id)
                 consulta.hora = datetime.strptime(data_dict['hora'], '%H:%M').time()
+        if 'duracao' in data_dict:
+            duracao=data_dict.get('duracao')
+            # Padrao de multiplo de 30 min
+            if duracao%30 == 0:
+                consulta.duracao = duracao
         if 'observacoes' in data_dict:
             consulta.observacoes = data_dict['observacoes']
         if 'status' in data_dict:
@@ -223,19 +233,21 @@ def validar_disponibilidade_consulta(data, hora, dentista_id):
     possibilidades_hora = [p * dif for p in range(int(60 // dif))]  # [0, 30]
 
     # Consultas na mesma data com o mesmo dentista
-    query = Consulta.query.with_entities(Consulta.hora).filter(
+    query = Consulta.query.with_entities(Consulta.hora, Consulta.duracao).filter(
         Consulta.data == data,
         Consulta.dentista_id == dentista_id
     ).all()
 
     for row in query:
         hora_existente = row[0]  # extrai datetime.time de dentro da Row
+        #diferença em minutos entre as consultas
         diferenca = abs((
             datetime.combine(date.min, hora_existente) - 
             datetime.combine(date.min, hora)
         ).total_seconds() / 60)
-
-        if diferenca < dif:
+        duracao = row[1] 
+        
+        if diferenca < duracao:
             raise HorarioDentistaError("Horário indisponível devido à agenda do dentista.", 400)
 
     # Verifica se o horário segue padrão de 30 em 30 minutos
