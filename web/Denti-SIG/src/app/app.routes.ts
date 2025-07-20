@@ -3,11 +3,13 @@ import { InicialDentistaComponent} from './inicial-dentista/inicial-dentista.com
 import { InicialComponent} from './inicial/inicial.component';
 import { InicialSecretarioComponent} from './inicial-secretario/inicial-secretario.component';
 import { GerenciarAgendaComponent} from './gerenciar-agenda/gerenciar-agenda.component';
+import { FichaPacienteComponent } from './ficha-paciente/ficha-paciente.component';
 import { HeaderComponent } from './shared/header/header.component';
 import { InitialComponent } from './pages/initial/initial.component';
+import { PacientesListaComponent } from './lista-pacientes/lista-pacientes.component';
 
 export const routes: Routes = [
-    {path: '', redirectTo: 'initial', pathMatch: 'full' },
+    {path: '', redirectTo: 'start', pathMatch: 'full' },
     {path: 'login', loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent) },
     {path: 'register', loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent)},
     {path: 'register-dentist', loadComponent: () => import('./features/auth/register-dentist/register-dentist.component').then(m => m.RegisterDentistComponent)},
@@ -17,5 +19,7 @@ export const routes: Routes = [
     {path: 'start', component: InicialComponent},
     {path: 'start-secretary', component: InicialSecretarioComponent},
     {path: 'agenda', component: GerenciarAgendaComponent},
-    {path: 'initial', component: InitialComponent}
+    {path: 'ficha/:cpf', component: FichaPacienteComponent },
+    {path: 'initial', component: InitialComponent},
+    {path: 'pacientes', component: PacientesListaComponent}
 ];

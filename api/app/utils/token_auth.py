@@ -1,10 +1,12 @@
 from functools import wraps
 import datetime
-from flask import request, session
+from flask import request
 import jwt
 import os
 from flask import jsonify
 from dotenv import load_dotenv
+import functools
+import inspect
 
 load_dotenv()
 
@@ -13,13 +15,14 @@ class AuthError(Exception):
         self.error = error
         self.status_code = status_code
 
-def generate_token(user_email):
-    SECRET_KEY = os.getenv('SECRET_KEY')
+def generate_token(user_id, user_type):
+    KEY = str(os.getenv('jwt_SECRET_KEY'))
     payload = {
-        'sub': user_email,
+        'id': user_id,
+        'type': user_type,
         'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)  # Token expira em 1 hora
     }
-    token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+    token = jwt.encode(payload, key=KEY, algorithm='HS256')
     return token
 
 
@@ -58,19 +61,28 @@ def get_token_auth_header():
     return token
 
 def requires_auth():
+    """
+    If the decorated function has "token" parameter, the decorator provides
+    """
     def decorator(f):
         @wraps(f)
-        def decorated(*args, **kwargs):
+        def wrapper(*args, **kwargs):
             token = get_token_auth_header()
+            sig = inspect.signature(f)
+            params = sig.parameters
             try:
-                SECRET_KEY = os.getenv('SECRET_KEY')
+                SECRET_KEY = str(os.getenv('jwt_SECRET_KEY'))
                 payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-                user_email = session['user_email']
-                if user_email and payload.get("sub") != user_email:
-                    return f(*args, **kwargs) # Correct
+                if "user_id" in params:
+                    if "user_id" not in kwargs:
+                        kwargs["user_id"] = payload.get("id")
+                if "user_type" in params:
+                    if "user_type" not in kwargs:
+                        kwargs["user_type"] = payload.get("type")
+                return f(*args, **kwargs) # Correct
             except jwt.ExpiredSignatureError:
                 return jsonify({"message": "Token expired"}), 401
             except jwt.InvalidTokenError:
-                return jsonify({"message": "Invalid token"}), 401
-        return decorated
+                return jsonify({"message": f"Invalid token, {token}"}), 401
+        return wrapper
     return decorator

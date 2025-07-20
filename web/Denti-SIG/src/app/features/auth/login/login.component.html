@@ -1,28 +1,36 @@
 <div class="login-container">
-    <h1 class="title">DENTI SIG</h1>
-    <h2 class="subtitle">Entre com a sua conta</h2>
-    <p class="register-text">
-      ou <a href="/register">cadastre-se</a> caso não possua uma conta ainda
+  <h1 class="title">DENTI SIG</h1>
+  <h2 class="subtitle">Entre com a sua conta</h2>
+  <p class="register-text">
+    ou <a href="/register">cadastre-se</a> caso não possua uma conta ainda
+  </p>
+
+  <div class="login-box">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="username">Login</label>
+        <input id="username" formControlName="username" type="text" placeholder="Login" />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Senha</label>
+        <input id="password" formControlName="password" type="password" placeholder="Senha" />
+      </div>
+
+      <!-- Novo campo de tipo -->
+      <div class="form-group">
+        <label for="type">Tipo de Usuário</label>
+        <select id="type" formControlName="type">
+          <option value="paciente">Paciente</option>
+          <option value="dentista">Dentista</option>
+          <option value="secretario">Secretário</option>
+        </select>
+      </div>
+      <button class="login-box" type="submit">Entrar</button>
+    </form>
+
+    <p class="forgot-password">
+      <a href="#">Esqueceu sua senha?</a>
     </p>
-  
-    <div class="login-box">
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <div class="form-group">
-          <label for="username">Login</label>
-          <input id="username" formControlName="username" type="text" placeholder="Login" />
-        </div>
-  
-        <div class="form-group">
-          <label for="password">Senha</label>
-          <input id="password" formControlName="password" type="password" placeholder="Senha" />
-        </div>
-  
-        <button class = "login-box" type="submit">Entrar</button>
-      </form>
-  
-      <p class="forgot-password">
-        <a href="#">Esqueceu sua senha?</a>
-      </p>
-    </div>
   </div>
-  
+</div>

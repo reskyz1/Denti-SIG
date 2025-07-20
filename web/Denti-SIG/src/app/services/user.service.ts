@@ -34,16 +34,6 @@ export interface RegisterPatientDTO {
   sexo?: string;
 }
 
-export interface LoginDSDTO {
-  email: string;
-  senha: string;
-}
-
-export interface LoginPatientDTO {
-  email_ou_cpf: string; // backend aceita email **ou** cpf
-  senha: string;
-}
-
 /*─────────────────────── Models (resposta) ─────────────*/
 export interface UsuarioToken {
   mensagem: string;
@@ -61,15 +51,39 @@ export interface Dentista {
   data_nascimento: string;
   telefone?: string;
   especialidade?: string;
+  cro?: string;
 }
 
 export interface Paciente {
-  nome: string;
-  email: string;
-  cpf: string;
-  data_nascimento: string;
-  telefone?: string;
+  id: number;                          // ID do paciente, gerado automaticamente pelo banco de dados
+  nome: string;                        // Nome completo do paciente
+  email: string;                       // Email do paciente
+  cpf: string;                         // CPF do paciente
+  data_nascimento: string;             // Data de nascimento no formato 'YYYY-MM-DD'
+  telefone?: string;                   // Telefone do paciente, opcional
+  endereco?: string;                   // Endereço do paciente, opcional
+  sexo?: string;                       // Sexo do paciente, opcional (pode ser 'Masculino', 'Feminino', etc.)
+  alergias?: string;                   // Alergias do paciente, opcional
+  doencas_cronicas?: string;           // Doenças crônicas, opcional
+  medicacoes_uso_continuo?: string;    // Medicamentos em uso contínuo, opcional
+  historico_cirurgico?: string;        // Histórico cirúrgico, opcional
+  queixa_principal?: string;           // Queixa principal do paciente, opcional
+  historico_tratamento_odontologico?: string; // Histórico de tratamentos odontológicos, opcional
+  higiene_bucal?: string;              // Informações sobre higiene bucal, opcional
+  observacoes_gerais?: string;
+  estadoCivil?: String;        // Observações gerais, opcional
+
+  problema_cardiaco?: boolean;         // Se o paciente tem problema cardíaco
+  diabetico?: boolean;                 // Se o paciente é diabético
+  fumante?: boolean;                   // Se o paciente é fumante
+  gestante?: boolean;                  // Se o paciente está gestante
+  aparelho_ortodontico?: boolean;      // Se o paciente usa aparelho ortodontico
+  usa_protese?: boolean;               // Se o paciente usa prótese
+  responsavel?: string;                // Nome do responsável pelo paciente, opcional
+  convenio?: string;                   // Convênio médico do paciente, opcional
+  numero_convenio?: string;            // Número do convênio do paciente, opcional
 }
+
 
 /*─────────────────────── Service ───────────────────────*/
 @Injectable({ providedIn: 'root' })
@@ -89,15 +103,6 @@ export class UsersApiService {
 
   registerPatient(dto: RegisterPatientDTO): Observable<MensagemResposta> {
     return this.http.post<MensagemResposta>(`${this.base}/register/patient`, dto);
-  }
-
-  /* ---------- Login ---------- */
-  loginDentistOrSecretary(dto: LoginDSDTO): Observable<UsuarioToken> {
-    return this.http.post<UsuarioToken>(`${this.base}/login/ds`, dto);
-  }
-
-  loginPatient(dto: LoginPatientDTO): Observable<UsuarioToken> {
-    return this.http.post<UsuarioToken>(`${this.base}/login/patient`, dto);
   }
 
   /* ---------- Listagens ---------- */

@@ -1,12 +1,16 @@
 # utils/consultas_utils.py
 
 from app.models.consulta import Consulta
+from app.models.paciente import Paciente
 from app import db
 from datetime import datetime, timedelta
+from app.utils.exceptions.permissao_negada import PermissaoNegada
 
 class ConsultaService:
     @staticmethod
-    def criar_consulta(data_dict):
+    def criar_consulta(data_dict, user_type):
+        if user_type not in ['dentista', 'secretario']:
+            raise PermissaoNegada("Somente pacientes ou secretários podem criar consultas.")
         validar_disponibilidade_consulta(data_dict['data'],data_dict['hora'], data_dict['dentista_id']) 
         nova = Consulta(
             data=datetime.strptime(data_dict['data'], '%Y-%m-%d').date(),
@@ -21,7 +25,9 @@ class ConsultaService:
         return nova
 
     @staticmethod
-    def atualizar_consulta(id, data_dict):
+    def atualizar_consulta(id, data_dict, user_type):
+        if user_type not in ['dentista', 'secretario']:
+            raise PermissaoNegada("Somente pacientes ou secretários podem criar consultas.")
         consulta = Consulta.query.get_or_404(id)
 
         # Mudar a data e o horario
@@ -52,7 +58,9 @@ class ConsultaService:
         return consulta
 
     @staticmethod
-    def deletar_consulta(id):
+    def deletar_consulta(id, user_type):
+        if user_type not in ['dentista', 'secretario']:
+            raise PermissaoNegada("Somente pacientes ou secretários podem criar consultas.")
         consulta = Consulta.query.get_or_404(id)
         db.session.delete(consulta)
         db.session.commit()
@@ -81,12 +89,24 @@ class ConsultaService:
         """
         dia = datetime.date.today()
         hora = datetime.time.now()
+        #Indisponibildiade do medico
         horarios_ind = Consulta.query.with_entities(Consulta.dia, Consulta.hora).filter(Consulta.data >= dia, Consulta.data > hora, Consulta.dentista_id == dentista_id).all()
+        #Indisponibildiade do Paciente
         horarios_ind.append(Consulta.query.with_entities(Consulta.dia,Consulta.hora).filter(Consulta.data >= dia, Consulta.data > hora, Consulta.paciente_id == paciente_id).all())
         horarios = criar_lista_horario(dia)
         horarios_disp = [h for h in horarios if h not in horarios_ind]
         return horarios_disp
     
+    @staticmethod
+    def listar_horarios_diponiveis(user_type, dentista_id, dia):
+        if user_type not in ['dentista', 'secretario']:
+            raise PermissaoNegada("Somente pacientes ou secretários podem criar consultas.")
+        dia = datetime.strptime(dia, '%Y-%m-%d').date()
+        horarios = criar_lista_horario(dia, dias = 1)
+        horarios_ind = Consulta.query.with_entities(Consulta.hora).filter(Consulta.data == dia, Consulta.dentista_id == dentista_id).all()
+        horarios_disp = [hora for _, hora in horarios if hora not in horarios_ind]
+        return horarios_disp
+
     @staticmethod
     def consultas_proximas(paciente_id):
         agora = datetime.now()
@@ -141,7 +161,29 @@ class ConsultaService:
                 'paciente_id': c.paciente_id
             })
         return resultado
-
+    def prontuario_paciente(cpf, user_type):
+        if user_type not in ['dentista', 'secretario']:
+            raise PermissaoNegada("Somente pacientes ou secretários podem criar consultas.")
+        paciente = Paciente.query.filter_by(cpf=cpf).first()
+        if paciente:
+            consultas = Consulta.query.filter_by(paciente_id = paciente.id).order_by(Consulta.hora.asc()).all()
+            if consultas:
+                resultado = []
+                for c in consultas:
+                    resultado.append({
+                        'data': c.data.strftime('%Y-%m-%d'),
+                        'hora': c.hora.strftime('%H:%M'),
+                        'observacoes': c.observacoes,
+                    })
+                info_paciente = {'nome': paciente.nome, 
+                                 'data_nascimento' : paciente.data_nascimento, 
+                                 'sexo' : paciente.sexo}
+                
+                return(info_paciente,resultado)
+            else: 
+                raise Exception("Nenhnuma consulta encontrada para o paciente com esse id")
+        else:
+            raise Exception("Paciente não encontrado")
     
 def criar_lista_horario(dia_base, dias: int = 7):
     """
@@ -171,15 +213,21 @@ def criar_lista_horario(dia_base, dias: int = 7):
 def validar_disponibilidade_consulta(data, hora, dentista_id):
     """
     Raises:
-        HorarioDentistaError: Se não tiver horario disponivel.
+        HorarioDentistaError: Se não tiver horario disponivel ou não seguir o padrão de 30 min.
     """
+    dif = 30
+    possibilidades_hora = [p * dif for p in range((60/dif) - 1)]
+    # Consultas na mesma data
     query = Consulta.query.with_entities(Consulta.hora).filter(Consulta.data == data, Consulta.dentista_id == dentista_id).all()
     if query:
         for horario in query:
-            # não pode ser no mesmo horario e n pode ter menos de 30 min de diferença de outra consulta
+            # Não pode ser no mesmo horario e n pode ter menos de 30 min de diferença de outra consulta
             diferenca = (horario - hora)
-            if diferenca < 30 and  diferenca > -30:
+            if diferenca < dif and  diferenca > (-1)*dif:
                 raise HorarioDentistaError(f' horario indiponivel devido a agenda do Dentista', 400)
+            
+    if (hora.split(":")[1] not in possibilidades_hora):
+        raise HorarioDentistaError(f'Esta hora não segue o padrão de horarios de consulta', 400)
 
 class HorarioDentistaError(Exception):
     def __init__(self, error, status_code):

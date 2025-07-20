@@ -1,0 +1,37 @@
+<app-header class = "fixed-header"></app-header>
+
+<div class="pacientes-wrapper">
+  <div class="pacientes-container">
+    <h2>Lista de Pacientes</h2>
+
+    <!-- Filtros -->
+    <div class="filtros">
+      <input
+        type="text"
+        placeholder="Filtrar por nome"
+        [(ngModel)]="filtroNome"
+        (input)="filtrarPacientes()" />
+
+      <input
+        type="text"
+        placeholder="Filtrar por CPF"
+        [(ngModel)]="filtroCpf"
+        (input)="filtrarPacientes()" />
+    </div>
+    <hr class="separador" />
+    <!-- Mensagem se nenhum encontrado -->
+    <div *ngIf="pacientesFiltrados.length === 0">
+      Nenhum paciente encontrado.
+    </div>
+
+    <!-- Lista -->
+    <div *ngIf="pacientesFiltrados.length > 0" class="lista">
+      <div *ngFor="let paciente of pacientesFiltrados"
+          (click)="abrirFicha(paciente)"
+          class="paciente-card">
+        <strong>{{ paciente.nome }}</strong><br>
+        <span>{{ paciente.cpf }}</span>
+      </div>
+    </div>
+  </div>
+</div>

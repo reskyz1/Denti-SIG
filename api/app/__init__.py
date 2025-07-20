@@ -19,6 +19,7 @@ def create_app():
     # ── Configurações básicas ────────────────────────────────────────────
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(BASE_DIR, "meubanco.db")}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.secret_key = os.getenv('app_SECRET_KEY')
 
     # ── Extensões ────────────────────────────────────────────────────────
     db.init_app(app)
