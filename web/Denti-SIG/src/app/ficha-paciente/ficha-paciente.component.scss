@@ -1,0 +1,120 @@
+.ficha-paciente {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+
+  h1 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: #2d3e50;
+  }
+
+  .botoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 20px;
+
+    button {
+      padding: 8px 16px;
+      font-size: 14px;
+      border: none;
+      border-radius: 6px;
+      background-color: #1976d2;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+
+      &:hover {
+        background-color: #155a9c;
+      }
+    }
+  }
+
+  .bloco {
+    margin-bottom: 40px;
+
+    h2 {
+      font-size: 1.4rem;
+      color: #1a237e;
+      margin-bottom: 15px;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 5px;
+    }
+
+    p,
+    label {
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 10px;
+      display: block;
+
+      strong {
+        color: #111;
+      }
+
+      input {
+        display: block;
+        margin-top: 5px;
+        padding: 6px 10px;
+        width: 100%;
+        max-width: 400px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+    }
+
+    ul {
+      padding-left: 20px;
+      margin-top: 5px;
+    }
+
+    .checkbox-group {
+      margin: 8px 0;
+
+      label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: normal;
+        font-size: 14px;
+
+        input[type='checkbox'] {
+          transform: scale(1.2);
+        }
+      }
+    }
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 40px 0;
+  }
+}
+
+// Responsividade
+@media (max-width: 600px) {
+  .ficha-paciente {
+    padding: 15px;
+
+    .botoes {
+      flex-direction: column;
+      align-items: stretch;
+
+      button {
+        width: 100%;
+      }
+    }
+
+    .bloco label input {
+      width: 100%;
+    }
+  }
+}
