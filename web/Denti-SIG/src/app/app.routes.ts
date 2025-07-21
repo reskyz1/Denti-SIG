@@ -8,7 +8,6 @@ import { HeaderComponent } from './shared/header/header.component';
 import { InitialComponent } from './pages/initial/initial.component';
 import { PacientesListaComponent } from './lista-pacientes/lista-pacientes.component';
 import { ConsultaComponent } from './consulta/consulta.component';
-import { ListaConsultasComponent } from './lista-consultas/lista-consultas.component';
 
 export const routes: Routes = [
     {path: '', redirectTo: 'start', pathMatch: 'full' },
@@ -25,5 +24,4 @@ export const routes: Routes = [
     {path: 'initial', component: InitialComponent},
     {path: 'pacientes', component: PacientesListaComponent},
     {path: 'consulta/:id', component: ConsultaComponent},
-    {path: 'consultas', component: ListaConsultasComponent}
 ];
