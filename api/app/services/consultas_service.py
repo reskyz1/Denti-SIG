@@ -12,14 +12,19 @@ class ConsultaService:
         if user_type not in ['dentista', 'secretario']:
             raise PermissaoNegada("Somente desntistas ou secretários podem criar consultas.")
         validar_disponibilidade_consulta(data_dict['data'],data_dict['hora'], data_dict['dentista_id']) 
-        nova = Consulta(
-            data=datetime.strptime(data_dict['data'], '%Y-%m-%d').date(),
-            hora=datetime.strptime(data_dict['hora'], '%H:%M').time(),
-            observacoes=data_dict.get('observacoes'),
-            status=data_dict.get('status', 'agendada'),
-            paciente_id=data_dict['paciente_id'],
-            dentista_id=data_dict['dentista_id']
-        )
+        duracao=data_dict.get('duracao')
+
+        # Padrao de multiplo de 30 min
+        if duracao%15 == 0:
+            nova = Consulta(
+                data=datetime.strptime(data_dict['data'], '%Y-%m-%d').date(),
+                hora=datetime.strptime(data_dict['hora'], '%H:%M').time(),
+                duracao=duracao,
+                observacoes=data_dict.get('observacoes'),
+                status=data_dict.get('status', 'agendada'),
+                paciente_id=data_dict['paciente_id'],
+                dentista_id=data_dict['dentista_id']
+            )
         db.session.add(nova)
         db.session.commit()
         return nova
@@ -45,8 +50,15 @@ class ConsultaService:
             if data_dict['hora'] != consulta.hora:
                 validar_disponibilidade_consulta(consulta.data,data_dict['hora'], consulta.dentista_id)
                 consulta.hora = datetime.strptime(data_dict['hora'], '%H:%M').time()
+        if 'duracao' in data_dict:
+            duracao=data_dict.get('duracao')
+            # Padrao de multiplo de 30 min
+            if duracao%15 == 0:
+                consulta.duracao = duracao
         if 'observacoes' in data_dict:
             consulta.observacoes = data_dict['observacoes']
+        if 'procedimento' in data_dict:
+            consulta.procedimento = data_dict['procedimento']
         if 'status' in data_dict:
             consulta.status = data_dict['status']
         if 'paciente_id' in data_dict:
@@ -120,11 +132,16 @@ class ConsultaService:
 
         resultado = []
         for c in consultas:
+            fim = datetime.combine(c.data, c.hora) + timedelta(minutes=c.duracao)
             resultado.append({
                 'id': c.id,
                 'data': c.data.strftime('%Y-%m-%d'),
                 'hora': c.hora.strftime('%H:%M'),
+                'inicio':str(c.data)+"T"+str(c.hora),
+                'fim': str(fim.date()) + "T" + str(fim.time()),
+                'duracao': c.duracao,
                 'observacoes': c.observacoes,
+                'procedimento': c.procedimento,
                 'status': c.status,
                 'dentista_id': c.dentista_id
             })
@@ -136,11 +153,16 @@ class ConsultaService:
         
         resultado = []
         for c in consultas:
+            fim = datetime.combine(c.data, c.hora) + timedelta(minutes=c.duracao)
             resultado.append({
                 'id': c.id,
                 'data': c.data.strftime('%Y-%m-%d'),
-                'hora': c.hora.strftime('%H:%M'),
+                'hora': c.hora.strftime('%H:%M'),                  
+                'inicio':str(c.data)+"T"+str(c.hora),
+                'fim': str(fim.date()) + "T" + str(fim.time()),
+                'duracao': c.duracao,
                 'observacoes': c.observacoes,
+                'procedimento': c.procedimento,
                 'status': c.status,
                 'dentista_id': c.dentista_id
             })
@@ -152,11 +174,16 @@ class ConsultaService:
 
         resultado = []
         for c in consultas:
+            fim = datetime.combine(c.data, c.hora) + timedelta(minutes=c.duracao)
             resultado.append({
                 'id': c.id,
                 'data': c.data.strftime('%Y-%m-%d'),
                 'hora': c.hora.strftime('%H:%M'),
+                'inicio':str(c.data)+"T"+str(c.hora),
+                'fim': str(fim.date()) + "T" + str(fim.time()),
+                'duracao': c.duracao,
                 'observacoes': c.observacoes,
+                'procedimento': c.procedimento,
                 'status': c.status,
                 'paciente_id': c.paciente_id
             })
@@ -170,10 +197,15 @@ class ConsultaService:
             if consultas:
                 resultado = []
                 for c in consultas:
+                    fim = datetime.combine(c.data, c.hora) + timedelta(minutes=c.duracao)
                     resultado.append({
                         'data': c.data.strftime('%Y-%m-%d'),
                         'hora': c.hora.strftime('%H:%M'),
+                        'inicio':str(c.data)+"T"+str(c.hora),
+                        'fim': str(fim.date()) + "T" + str(fim.time()),
+                        'duracao': c.duracao,
                         'observacoes': c.observacoes,
+                        'procedimento': c.procedimento,
                     })
                 info_paciente = {'nome': paciente.nome, 
                                  'data_nascimento' : paciente.data_nascimento, 
@@ -197,7 +229,7 @@ def criar_lista_horario(dia_base, dias: int = 7):
     Returns:
         list: Lista de tuplas (data, hora).
     """
-    dif = 30  # Diferença em minutos
+    dif = 15  # Diferença em minutos
     n_horarios = int((24 * 60) / dif)  
     lista = []
 
@@ -219,23 +251,25 @@ def validar_disponibilidade_consulta(data, hora, dentista_id):
     if isinstance(hora, str):
         hora = datetime.strptime(hora, "%H:%M").time()
 
-    dif = 30  # diferença mínima em minutos
+    dif = 15  # diferença mínima em minutos
     possibilidades_hora = [p * dif for p in range(int(60 // dif))]  # [0, 30]
 
     # Consultas na mesma data com o mesmo dentista
-    query = Consulta.query.with_entities(Consulta.hora).filter(
+    query = Consulta.query.with_entities(Consulta.hora, Consulta.duracao).filter(
         Consulta.data == data,
         Consulta.dentista_id == dentista_id
     ).all()
 
     for row in query:
         hora_existente = row[0]  # extrai datetime.time de dentro da Row
+        #diferença em minutos entre as consultas
         diferenca = abs((
             datetime.combine(date.min, hora_existente) - 
             datetime.combine(date.min, hora)
         ).total_seconds() / 60)
+        duracao = row[1] 
 
-        if diferenca < dif:
+        if diferenca < duracao:
             raise HorarioDentistaError("Horário indisponível devido à agenda do dentista.", 400)
 
     # Verifica se o horário segue padrão de 30 em 30 minutos
