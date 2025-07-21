@@ -16,10 +16,11 @@
   </div>
   
 
-  <div class="calendar-wrapper">
   <div class="full-calendar-container">
-    <full-calendar *ngIf="calendarOptions" [options]="calendarOptions"></full-calendar>
-  </div>
+  <full-calendar 
+    *ngIf="calendarOptions" 
+    [options]="calendarOptions"
+  ></full-calendar>
   <button class="botao-add-consulta" (click)="abrirPopupConsulta()">+</button>
 </div>
 </div>
