@@ -11,12 +11,12 @@ interface Consulta {
 }
 
 @Component({
-  selector: 'app-inicio-paciente',
+  selector: 'app-inicio-gerente',
   imports: [CommonModule],
-  templateUrl: './inicio-paciente-teste.component.html',
-  styleUrl: './inicio-paciente-teste.component.scss'
+  templateUrl: './inicio-gerente.component.html',
+  styleUrl: './inicio-gerente.component.scss'
 })
-export class InicioPacienteTesteComponent {
+export class InicioGerenteComponent {
   codigoPaciente = '123456';
   email = 'maria@email.com';
   celular = '(11) 91234-5678';
