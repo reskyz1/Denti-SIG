@@ -15,7 +15,7 @@ class ConsultaService:
         duracao=data_dict.get('duracao')
 
         # Padrao de multiplo de 30 min
-        if duracao%30 == 0:
+        if duracao%15 == 0:
             nova = Consulta(
                 data=datetime.strptime(data_dict['data'], '%Y-%m-%d').date(),
                 hora=datetime.strptime(data_dict['hora'], '%H:%M').time(),
@@ -53,7 +53,7 @@ class ConsultaService:
         if 'duracao' in data_dict:
             duracao=data_dict.get('duracao')
             # Padrao de multiplo de 30 min
-            if duracao%30 == 0:
+            if duracao%15 == 0:
                 consulta.duracao = duracao
         if 'observacoes' in data_dict:
             consulta.observacoes = data_dict['observacoes']
@@ -229,7 +229,7 @@ def criar_lista_horario(dia_base, dias: int = 7):
     Returns:
         list: Lista de tuplas (data, hora).
     """
-    dif = 30  # Diferença em minutos
+    dif = 15  # Diferença em minutos
     n_horarios = int((24 * 60) / dif)  
     lista = []
 
@@ -251,7 +251,7 @@ def validar_disponibilidade_consulta(data, hora, dentista_id):
     if isinstance(hora, str):
         hora = datetime.strptime(hora, "%H:%M").time()
 
-    dif = 30  # diferença mínima em minutos
+    dif = 15  # diferença mínima em minutos
     possibilidades_hora = [p * dif for p in range(int(60 // dif))]  # [0, 30]
 
     # Consultas na mesma data com o mesmo dentista
