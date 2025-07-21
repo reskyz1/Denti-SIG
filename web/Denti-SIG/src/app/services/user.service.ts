@@ -86,6 +86,28 @@ export interface Paciente {
   convenio?: string;                   // Convênio médico do paciente, opcional
   numero_convenio?: string;            // Número do convênio do paciente, opcional
 }
+export interface Consulta {
+  id: number;
+  data: string; // formato: YYYY-MM-DD
+  hora: string; // formato: HH:MM
+  duracao: number;
+  observacoes?: string;
+  procedimento?: string;
+  status: 'agendada' | 'realizada' | 'cancelada';
+
+  paciente_id: number;
+  dentista_id: number;
+
+  // Se você estiver retornando os objetos relacionados:
+  paciente?: {
+    id: number;
+    nome: string;
+  };
+  dentista?: {
+    id: number;
+    nome: string;
+  };
+}
 
 
 /*─────────────────────── Service ───────────────────────*/
@@ -124,6 +146,10 @@ export class UsersApiService {
   pacientePorCpf(cpf: string | number): Observable<Paciente> {
     return this.http.get<Paciente>(`${this.base}/pacientes/${cpf}`);
   }
+    
+  editarPacienteInfoMedica(cpf: string, dados: Partial<Paciente>): Observable<MensagemResposta> {
+    return this.http.put<MensagemResposta>(`${this.base}/paciente/${cpf}`, dados);
+  }
 }
 
 /*──────────────────── ConsultasApiService ───────────────────*/
@@ -149,23 +175,26 @@ export class ConsultasApiService {
   deletarConsulta(id: number): Observable<MensagemResposta> {
     return this.http.delete<MensagemResposta>(`${this.base}/consultas/${id}`);
   }
-
   listarConsultas(params?: Record<string, string>): Observable<{mensagem:ConsultaRetornada[]}> {
     return this.http.get<{mensagem:ConsultaRetornada[]}>(`${this.base}/consultas`, { params });
   }
 
-  consultasProximas(pacienteId: number): Observable<any> {
-    return this.http.get(`${this.base}/consultas/proximas/${pacienteId}`);
+  consultasProximas(pacienteId: number): Observable<Consulta[]> {
+    return this.http.get<Consulta[]>(`${this.base}/consultas/proximas/${pacienteId}`);
   }
 
-  listarConsultasPaciente(pacienteId: number): Observable<any> {
-    return this.http.get(`${this.base}/consultas/paciente/${pacienteId}`);
+  listarConsultasPaciente(pacienteId: number): Observable<Consulta[]> {
+    return this.http.get<Consulta[]>(`${this.base}/consultas/paciente/${pacienteId}`);
   }
 
-  listarConsultasDentistaPorData(dentistaId: number, dataISO: string): Observable<any> {
+  listarConsultasDentistaPorData(dentistaId: number, dataISO: string): Observable<Consulta[]> {
     const params = new HttpParams()
       .set('dentista_id', dentistaId)
-      .set('data', dataISO); // 'YYYY-MM-DD'
-    return this.http.get(`${this.base}/consultas/dentista`, { params });
+      .set('data', dataISO);
+    return this.http.get<Consulta[]>(`${this.base}/consultas/dentista`, { params });
+  }
+
+  getConsultaPorId(id: number): Observable<Consulta> {
+    return this.http.get<Consulta>(`${this.base}/consulta/${id}`);
   }
 }

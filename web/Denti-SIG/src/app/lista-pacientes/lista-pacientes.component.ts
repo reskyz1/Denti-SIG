@@ -28,6 +28,7 @@ export class PacientesListaComponent implements OnInit {
   ngOnInit(): void {
     this.usersService.listarPacientes().subscribe({
       next: (data) => {
+        console.log('Pacientes recebidos:', data);
         this.pacientes = data;
         this.pacientesFiltrados = data;
       },
