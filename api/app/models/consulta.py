@@ -9,6 +9,7 @@ class Consulta(db.Model):
     hora = db.Column(db.Time, nullable=False)
     duracao = db.Column(db.Integer, nullable=False)
     observacoes = db.Column(db.Text)
+    procedimento = db.Column(db.Text)
     status = db.Column(db.String(20), default='agendada')
 
     paciente_id = db.Column(db.Integer, db.ForeignKey('pacientes.id'), nullable=False)

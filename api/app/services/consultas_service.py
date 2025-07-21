@@ -57,6 +57,8 @@ class ConsultaService:
                 consulta.duracao = duracao
         if 'observacoes' in data_dict:
             consulta.observacoes = data_dict['observacoes']
+        if 'procedimento' in data_dict:
+            consulta.procedimento = data_dict['procedimento']
         if 'status' in data_dict:
             consulta.status = data_dict['status']
         if 'paciente_id' in data_dict:
@@ -137,6 +139,7 @@ class ConsultaService:
                 'horario': str(c.data)+ "T" + str(c.hora),
                 'duracao': c.duracao,
                 'observacoes': c.observacoes,
+                'procedimento': c.procedimento,
                 'status': c.status,
                 'dentista_id': c.dentista_id
             })
@@ -155,6 +158,7 @@ class ConsultaService:
                 'horario': str(c.data)+ "T" + str(c.hora),
                 'duracao': c.duracao,
                 'observacoes': c.observacoes,
+                'procedimento': c.procedimento,
                 'status': c.status,
                 'dentista_id': c.dentista_id
             })
@@ -173,6 +177,7 @@ class ConsultaService:
                 'horario': str(c.data)+ "T" + str(c.hora),
                 'duracao': c.duracao,
                 'observacoes': c.observacoes,
+                'procedimento': c.procedimento,
                 'status': c.status,
                 'paciente_id': c.paciente_id
             })
@@ -192,6 +197,7 @@ class ConsultaService:
                         'horario': str(c.data)+ "T" + str(c.hora),
                         'duracao': c.duracao,
                         'observacoes': c.observacoes,
+                        'procedimento': c.procedimento,
                     })
                 info_paciente = {'nome': paciente.nome, 
                                  'data_nascimento' : paciente.data_nascimento, 

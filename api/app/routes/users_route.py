@@ -141,6 +141,7 @@ def listar_consultas():
                 'status': c.status,
                 'duracao': c.duracao,
                 'observacoes': c.observacoes,
+                'procedimento': c.procedimento,
                 'paciente_id': c.paciente_id,
                 'dentista_id': c.dentista_id
             })
