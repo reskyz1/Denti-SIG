@@ -17,9 +17,6 @@ export class ListaConsultasComponent implements OnInit {
   consultas: any[] = [];
   consultasFiltradas: any[] = [];
 
-  filtroNome: string = '';
-  filtroStatus: string = '';
-
   constructor(
     private consultaService: ConsultasApiService,
     private router: Router
@@ -36,15 +33,20 @@ export class ListaConsultasComponent implements OnInit {
     });
   }
 
-  filtrarConsultas(): void {
-    const nome = this.filtroNome.toLowerCase();
-    const status = this.filtroStatus.toLowerCase();
+  filtroStatus: string = '';
+  filtroData: string = ''; // nova variável para data no formato 'yyyy-mm-dd'
 
-    this.consultasFiltradas = this.consultas.filter(c =>
-      c.paciente_nome.toLowerCase().includes(nome) &&
-      (status === '' || c.status.toLowerCase() === status)
-    );
+  filtrarConsultas(): void {
+    const status = this.filtroStatus.toLowerCase();
+    const dataFiltro = this.filtroData; // já no formato correto do input date
+
+    this.consultasFiltradas = this.consultas.filter(c => {
+      const statusOk = status === '' || c.status.toLowerCase() === status;
+      const dataOk = dataFiltro === '' || c.data === dataFiltro;
+      return statusOk && dataOk;
+    });
   }
+
 
   abrirConsulta(consulta: any): void {
     this.router.navigate(['/consulta', consulta.id]);

@@ -4,21 +4,20 @@
   <div class="pacientes-container">
     <h2>Consultas Agendadas</h2>
 
-    <!-- Filtros -->
     <div class="filtros">
-      <input
-        type="text"
-        placeholder="Filtrar por nome do paciente"
-        [(ngModel)]="filtroNome"
-        (input)="filtrarConsultas()" />
+        <input
+            type="date"
+            [(ngModel)]="filtroData"
+            (change)="filtrarConsultas()" />
 
-      <select [(ngModel)]="filtroStatus" (change)="filtrarConsultas()">
-        <option value="">Todos os status</option>
-        <option value="agendada">Agendada</option>
-        <option value="realizada">Realizada</option>
-        <option value="cancelada">Cancelada</option>
-      </select>
+        <select [(ngModel)]="filtroStatus" (change)="filtrarConsultas()">
+            <option value="">Todos os status</option>
+            <option value="agendada">Agendada</option>
+            <option value="realizada">Realizada</option>
+            <option value="cancelada">Cancelada</option>
+        </select>
     </div>
+
 
     <hr class="separador" />
 
