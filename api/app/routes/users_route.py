@@ -67,7 +67,6 @@ def login():
         }
     })
 
-
 @users_bp.route('/dentistas', methods=['GET'])
 def listar_dentistas():
     lista = UserService.listar_dentistas()
@@ -85,8 +84,6 @@ def paciente_por_cpf(cpf):
         return jsonify(paciente.serialize())
     except Exception as e:
         return jsonify({'erro': str(e)}), 400
-
-
 
 
 @users_bp.route('/consultas', methods=['POST'])
@@ -131,19 +128,26 @@ def deletar_consulta(id, user_type):
 @users_bp.route('/consultas', methods=['GET'])
 def listar_consultas():
     filtros = request.args.to_dict()
-    consultas = ConsultaService.listar_consultas(filtros)
+    try:
+        consultas = ConsultaService.listar_consultas(filtros)
 
-    resultado = []
-    for c in consultas:
-        resultado.append({
-            'id': c.id,
-            'data': str(c.data),
-            'hora': str(c.hora),
-            'status': c.status,
-            'observacoes': c.observacoes,
-            'paciente_id': c.paciente_id,
-            'dentista_id': c.dentista_id
-        })
+        resultado = []
+        for c in consultas:
+            resultado.append({
+                'id': c.id,
+                'data': str(c.data),
+                'hora': str(c.hora),
+                'horario':str(c.data)+"T"+str(c.hora),
+                'status': c.status,
+                'duracao': c.duracao,
+                'observacoes': c.observacoes,
+                'paciente_id': c.paciente_id,
+                'dentista_id': c.dentista_id
+            })
+        return jsonify({'mensagem': resultado}), 200
+    except Exception as e:
+        return jsonify({'erro': str(e)}), 400
+    
 
 @users_bp.route('/consultas/proximas/<int:paciente_id>', methods=['GET'])
 def consultas_proximas(paciente_id):

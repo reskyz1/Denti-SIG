@@ -134,6 +134,8 @@ class ConsultaService:
                 'id': c.id,
                 'data': c.data.strftime('%Y-%m-%d'),
                 'hora': c.hora.strftime('%H:%M'),
+                'horario': str(c.data)+ "T" + str(c.hora),
+                'duracao': c.duracao,
                 'observacoes': c.observacoes,
                 'status': c.status,
                 'dentista_id': c.dentista_id
@@ -150,6 +152,8 @@ class ConsultaService:
                 'id': c.id,
                 'data': c.data.strftime('%Y-%m-%d'),
                 'hora': c.hora.strftime('%H:%M'),
+                'horario': str(c.data)+ "T" + str(c.hora),
+                'duracao': c.duracao,
                 'observacoes': c.observacoes,
                 'status': c.status,
                 'dentista_id': c.dentista_id
@@ -166,6 +170,8 @@ class ConsultaService:
                 'id': c.id,
                 'data': c.data.strftime('%Y-%m-%d'),
                 'hora': c.hora.strftime('%H:%M'),
+                'horario': str(c.data)+ "T" + str(c.hora),
+                'duracao': c.duracao,
                 'observacoes': c.observacoes,
                 'status': c.status,
                 'paciente_id': c.paciente_id
@@ -183,6 +189,8 @@ class ConsultaService:
                     resultado.append({
                         'data': c.data.strftime('%Y-%m-%d'),
                         'hora': c.hora.strftime('%H:%M'),
+                        'horario': str(c.data)+ "T" + str(c.hora),
+                        'duracao': c.duracao,
                         'observacoes': c.observacoes,
                     })
                 info_paciente = {'nome': paciente.nome, 
@@ -246,7 +254,7 @@ def validar_disponibilidade_consulta(data, hora, dentista_id):
             datetime.combine(date.min, hora)
         ).total_seconds() / 60)
         duracao = row[1] 
-        
+
         if diferenca < duracao:
             raise HorarioDentistaError("Horário indisponível devido à agenda do dentista.", 400)
 
