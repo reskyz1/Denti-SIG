@@ -14,7 +14,9 @@ import { EventInput } from '@fullcalendar/core';
 import { Dentista } from 'src/app/services/user.service';
 import { AgendarConsultaComponent } from 'src/app/shared/agendar-consulta/agendar-consulta.component';
 import { MatDialog } from '@angular/material/dialog';
-import {UsersApiService} from 'src/app/services/user.service';
+import {UsersApiService, ConsultasApiService} from 'src/app/services/user.service';
+import {ConsultaRetornada} from 'src/app/models/consultaRetornada';
+import {Paciente} from 'src/app/models/paciente';
 
 @Component({
   selector: 'app-initial',
@@ -37,11 +39,14 @@ export class InitialComponent implements OnInit{
   selectedDate: Date = new Date();
   calendarOptions: CalendarOptions | undefined;
   eventList?: EventInput[];
+  pacientes: Paciente[] = [];
+  consultas: ConsultaRetornada[] = [];
+  consultasDentista: ConsultaRetornada[] = [];
   dentistas: Dentista[] = [];
   dentistaSelecionado?: Dentista
   popUp: boolean = false
   
-  constructor(@Inject(PLATFORM_ID) private platformId: Object,private dialog: MatDialog, private userService: UsersApiService) {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object,private dialog: MatDialog, private userService: UsersApiService, private consultaService: ConsultasApiService) {
     if (isPlatformBrowser(this.platformId)) {
       this.calendarOptions = {
         initialView: 'timeGridWeek',
@@ -60,6 +65,7 @@ export class InitialComponent implements OnInit{
 
   selecionarDentista(dentista: Dentista){
     this.dentistaSelecionado = dentista;
+    this.filtrarConsultasPorDentista();
   }
 
   abrirPopupConsulta() {
@@ -70,13 +76,32 @@ export class InitialComponent implements OnInit{
       panelClass: 'custom-modal'
     });
 
-    dialogRef.afterClosed().subscribe(() => {
+    dialogRef.afterClosed().subscribe((novaConsulta) => {
       this.popUp = false; 
+
+      if (novaConsulta) {
+       this.carregarConsultasComPacientes();
+      }
     });
   }
 }
 
-  ngOnInit(): void {
+
+getNomePacientePorId(id: number): string {
+    const paciente = this.pacientes.find(p => p.id === id);
+    return paciente ? paciente.nome : 'Paciente não encontrado';
+  }
+  
+
+  montarEventos(consultas: ConsultaRetornada[]): EventInput[] {
+    return consultas.map((consulta) => ({
+      title: `${this.getNomePacientePorId(consulta.paciente_id)}`,
+      start: consulta.inicio,
+      end: consulta.fim
+    }));
+  }
+
+  carregarDentistas(): void {
   this.userService.listarDentistas().subscribe({
     next: (res) => {
       this.dentistas = res;
@@ -89,12 +114,7 @@ export class InitialComponent implements OnInit{
 
         if (tipoUsuario === 'dentista' && usuarioJson) {
           const usuario = JSON.parse(usuarioJson);
-          for (const d of this.dentistas) {
-            if (d.id === usuario.id) {
-              dentista = d;
-              break;
-            }
-          }
+          dentista = this.dentistas.find(d => d.id === usuario.id);
         } else {
           dentista = this.dentistas[0];
         }
@@ -109,5 +129,49 @@ export class InitialComponent implements OnInit{
     }
   });
 }
+
+
+  carregarConsultasComPacientes(): void {
+    this.consultaService.listarConsultas().subscribe({
+      next: (res) => {
+        this.consultas = res.mensagem;
+
+        this.userService.listarPacientesNormal().subscribe({
+          next: (res) => {
+            this.pacientes = res;
+
+            if (this.calendarOptions) {
+             this.filtrarConsultasPorDentista();
+            }
+         },
+          error: (error) => {
+           console.error('Erro ao buscar pacientes', error);
+          }
+        });
+      },
+       error: (error) => {
+        console.error('Erro ao buscar consultas', error);
+      }
+    });
+}
+
+filtrarConsultasPorDentista(): void {
+  if (!this.dentistaSelecionado) return;
+
+  this.consultasDentista = this.consultas.filter(
+    (consulta) => consulta.dentista_id === this.dentistaSelecionado!.id
+  );
+
+  if (this.calendarOptions) {
+    this.calendarOptions.events = this.montarEventos(this.consultasDentista);
+  }
+}
+
+
+  ngOnInit(): void {
+  this.carregarDentistas();
+  this.carregarConsultasComPacientes();
+}
+
 
 }

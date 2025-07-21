@@ -18,6 +18,7 @@ export interface LoginResponse{
     nome: string;
     email: string;
   };
+  token: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -30,6 +31,7 @@ export class AuthService {
     return this.http.post<LoginResponse>(this.api, dto).pipe(
       tap({
         next: (res) => {
+          localStorage.setItem('token',res.token);
           localStorage.setItem('tipo', res.tipo);
           localStorage.setItem('usuario', JSON.stringify(res.usuario));
 

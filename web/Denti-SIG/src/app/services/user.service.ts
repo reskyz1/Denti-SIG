@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment'; // ajuste se mover o arquivo
+import { ConsultaRetornada } from '../models/consultaRetornada';
 
 /*──────────────────────── DTOs ────────────────────────*/
 export interface RegisterDentistDTO {
@@ -41,6 +42,7 @@ export interface UsuarioToken {
 }
 
 export interface MensagemResposta {
+  id: number;
   mensagem: string;
 }
 
@@ -115,6 +117,10 @@ export class UsersApiService {
     return this.http.get<Paciente[]>(`${this.base}/pacientes`);
   }
 
+  listarPacientesNormal(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/pacientes`);
+  }
+
   pacientePorCpf(cpf: string | number): Observable<Paciente> {
     return this.http.get<Paciente>(`${this.base}/pacientes/${cpf}`);
   }
@@ -127,8 +133,14 @@ export class ConsultasApiService {
   private readonly base = environment.apiBase;
 
   criarConsulta(body: any): Observable<MensagemResposta> {
-    return this.http.post<MensagemResposta>(`${this.base}/consultas`, body);
-  }
+    const token = localStorage.getItem('token');
+
+    const headers = new HttpHeaders({
+     Authorization: `Bearer ${token}`
+    });
+
+  return this.http.post<MensagemResposta>(`${this.base}/consultas`, body, { headers });
+}
 
   atualizarConsulta(id: number, body: any): Observable<MensagemResposta> {
     return this.http.put<MensagemResposta>(`${this.base}/consultas/${id}`, body);
@@ -138,8 +150,8 @@ export class ConsultasApiService {
     return this.http.delete<MensagemResposta>(`${this.base}/consultas/${id}`);
   }
 
-  listarConsultas(params?: Record<string, string>): Observable<any[]> {
-    return this.http.get<any[]>(`${this.base}/consultas`, { params });
+  listarConsultas(params?: Record<string, string>): Observable<{mensagem:ConsultaRetornada[]}> {
+    return this.http.get<{mensagem:ConsultaRetornada[]}>(`${this.base}/consultas`, { params });
   }
 
   consultasProximas(pacienteId: number): Observable<any> {

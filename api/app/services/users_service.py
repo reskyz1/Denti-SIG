@@ -117,6 +117,7 @@ class UserService:
         lista = []
         for p in pacientes:
             lista.append({
+                "id": p.id,
                 "nome": p.nome,
                 "email": p.email,
                 "cpf": p.cpf,
