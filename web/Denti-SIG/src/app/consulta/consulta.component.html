@@ -1,0 +1,50 @@
+<div class="container">
+  <h2>Editar Consulta</h2>
+
+  <div class="form-e-imagem">
+    <div class="imagem-dentes">
+      <img src="/images/denticao.png" alt="Dentição numerada" />
+    </div>
+
+    <form (ngSubmit)="salvarConsulta()" #consultaForm="ngForm" class="formulario">
+      <div class="grupo-campos">
+        <label for="data">Data:</label>
+        <input type="date" id="data" name="data" [(ngModel)]="consulta.data" required />
+      </div>
+
+      <div class="grupo-campos">
+        <label for="hora">Hora:</label>
+        <input type="time" id="hora" name="hora" [(ngModel)]="consulta.hora" required />
+      </div>
+
+      <div class="grupo-campos">
+        <label for="duracao">Duração (min):</label>
+        <input type="number" id="duracao" name="duracao" [(ngModel)]="consulta.duracao" required />
+      </div>
+
+      <div class="grupo-campos">
+        <label for="status">Status:</label>
+        <select id="status" name="status" [(ngModel)]="consulta.status" required>
+          <option value="agendada">Agendada</option>
+          <option value="realizada">Realizada</option>
+          <option value="cancelada">Cancelada</option>
+        </select>
+      </div>
+
+      <div class="grupo-campos">
+        <label for="procedimento">Procedimento:</label>
+        <textarea id="procedimento" name="procedimento" [(ngModel)]="consulta.procedimento"></textarea>
+      </div>
+
+      <div class="grupo-campos">
+        <label for="observacoes">Observações:</label>
+        <textarea id="observacoes" name="observacoes" [(ngModel)]="consulta.observacoes"></textarea>
+      </div>
+
+      <div class="botoes">
+        <button type="submit" class="btn salvar">Salvar</button>
+        <button type="button" class="btn cancelar" (click)="cancelar()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
