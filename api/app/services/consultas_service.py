@@ -23,7 +23,8 @@ class ConsultaService:
                 observacoes=data_dict.get('observacoes'),
                 status=data_dict.get('status', 'agendada'),
                 paciente_id=data_dict['paciente_id'],
-                dentista_id=data_dict['dentista_id']
+                dentista_id=data_dict['dentista_id'],
+                 procedimento = data_dict['procedimento']
             )
         db.session.add(nova)
         db.session.commit()
