@@ -1,0 +1,106 @@
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.grupo-campos {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #444;
+}
+
+input, select, textarea {
+  padding: 0.7rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+textarea {
+  min-height: 100px;
+}
+
+.imagem-dentes {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.imagem-dentes img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.botoes {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.btn {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn.salvar {
+  background-color: #4caf50;
+  color: white;
+}
+
+.btn.salvar:hover {
+  background-color: #45a049;
+}
+
+.btn.cancelar {
+  background-color: #f44336;
+  color: white;
+}
+
+.btn.cancelar:hover {
+  background-color: #e53935;
+}
+.form-e-imagem {
+  display: flex;
+  gap: 30px; /* espaço entre a imagem e o formulário */
+  align-items: flex-start; /* alinha no topo */
+}
+
+/* Ajusta o tamanho da imagem para não ficar gigante */
+.imagem-dentes img {
+  max-width: 300px;  /* ou um valor que caiba bem no seu layout */
+  height: auto;
+  border: 1px solid #ccc; /* só pra dar um contorno sutil, opcional */
+  border-radius: 8px; /* cantos arredondados, opcional */
+}
+
+/* Faz o formulário ocupar o espaço restante */
+.formulario {
+  flex: 1;
+}

@@ -1,0 +1,89 @@
+.pacientes-wrapper {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: #ffffff;
+  padding-top: 100px; // espaço abaixo do cabeçalho
+}
+
+.fixed-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000; // Garante que fique acima dos outros elementos
+  background-color: white; // Ou outra cor de fundo
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Sombra leve opcional
+}
+
+.pacientes-container {
+  width: 100%;
+  max-width: 600px;
+  background-color: #f4f7fa;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: #14516B;
+}
+
+.filtros {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 25px;
+
+  input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+  }
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.paciente-card {
+  padding: 15px;
+  background-color: #e6f0ff;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+  text-align: left;
+
+  &:hover {
+    background-color: #d0e7ff;
+    transform: scale(1.01);
+  }
+
+  strong {
+    display: block;
+    font-size: 18px;
+    color: #0a3c61;
+  }
+
+  span {
+    color: #333;
+    font-size: 14px;
+  }
+}
+
+div[ngIf] {
+  color: #888;
+  font-style: italic;
+  margin-top: 20px;
+}
+.separador {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 20px 0;
+}
