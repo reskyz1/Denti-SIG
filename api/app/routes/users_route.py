@@ -133,11 +133,13 @@ def listar_consultas():
 
         resultado = []
         for c in consultas:
+            fim = datetime.combine(c.data, c.hora) + timedelta(minutes=c.duracao)
             resultado.append({
                 'id': c.id,
                 'data': str(c.data),
                 'hora': str(c.hora),
-                'horario':str(c.data)+"T"+str(c.hora),
+                'inicio':str(c.data)+"T"+str(c.hora),
+                'fim': str(fim.date()) + "T" + str(fim.time()),
                 'status': c.status,
                 'duracao': c.duracao,
                 'observacoes': c.observacoes,

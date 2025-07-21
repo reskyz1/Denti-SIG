@@ -132,11 +132,13 @@ class ConsultaService:
 
         resultado = []
         for c in consultas:
+            fim = datetime.combine(c.data, c.hora) + timedelta(minutes=c.duracao)
             resultado.append({
                 'id': c.id,
                 'data': c.data.strftime('%Y-%m-%d'),
                 'hora': c.hora.strftime('%H:%M'),
-                'horario': str(c.data)+ "T" + str(c.hora),
+                'inicio':str(c.data)+"T"+str(c.hora),
+                'fim': str(fim.date()) + "T" + str(fim.time()),
                 'duracao': c.duracao,
                 'observacoes': c.observacoes,
                 'procedimento': c.procedimento,
@@ -151,11 +153,13 @@ class ConsultaService:
         
         resultado = []
         for c in consultas:
+            fim = datetime.combine(c.data, c.hora) + timedelta(minutes=c.duracao)
             resultado.append({
                 'id': c.id,
                 'data': c.data.strftime('%Y-%m-%d'),
-                'hora': c.hora.strftime('%H:%M'),
-                'horario': str(c.data)+ "T" + str(c.hora),
+                'hora': c.hora.strftime('%H:%M'),                  
+                'inicio':str(c.data)+"T"+str(c.hora),
+                'fim': str(fim.date()) + "T" + str(fim.time()),
                 'duracao': c.duracao,
                 'observacoes': c.observacoes,
                 'procedimento': c.procedimento,
@@ -170,11 +174,13 @@ class ConsultaService:
 
         resultado = []
         for c in consultas:
+            fim = datetime.combine(c.data, c.hora) + timedelta(minutes=c.duracao)
             resultado.append({
                 'id': c.id,
                 'data': c.data.strftime('%Y-%m-%d'),
                 'hora': c.hora.strftime('%H:%M'),
-                'horario': str(c.data)+ "T" + str(c.hora),
+                'inicio':str(c.data)+"T"+str(c.hora),
+                'fim': str(fim.date()) + "T" + str(fim.time()),
                 'duracao': c.duracao,
                 'observacoes': c.observacoes,
                 'procedimento': c.procedimento,
@@ -191,10 +197,12 @@ class ConsultaService:
             if consultas:
                 resultado = []
                 for c in consultas:
+                    fim = datetime.combine(c.data, c.hora) + timedelta(minutes=c.duracao)
                     resultado.append({
                         'data': c.data.strftime('%Y-%m-%d'),
                         'hora': c.hora.strftime('%H:%M'),
-                        'horario': str(c.data)+ "T" + str(c.hora),
+                        'inicio':str(c.data)+"T"+str(c.hora),
+                        'fim': str(fim.date()) + "T" + str(fim.time()),
                         'duracao': c.duracao,
                         'observacoes': c.observacoes,
                         'procedimento': c.procedimento,
