@@ -94,10 +94,6 @@ def paciente_por_cpf(cpf):
 def criar_consulta(user_type):
     try:
         dados = request.json
-
-        print("dados recebidos:", dados)
-        print("tipo dos campos:", {k: type(v) for k, v in dados.items()})
-
         consulta = ConsultaService.criar_consulta(dados, user_type)
         return jsonify({'mensagem': 'Consulta criada com sucesso', 'id': consulta.id}), 201
     except PermissaoNegada as e:

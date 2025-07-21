@@ -16,7 +16,6 @@ import { AgendarConsultaComponent } from 'src/app/shared/agendar-consulta/agenda
 import { MatDialog } from '@angular/material/dialog';
 import {UsersApiService} from 'src/app/services/user.service';
 
-
 @Component({
   selector: 'app-initial',
   standalone: true,
@@ -110,6 +109,5 @@ export class InitialComponent implements OnInit{
     }
   });
 }
-
 
 }
