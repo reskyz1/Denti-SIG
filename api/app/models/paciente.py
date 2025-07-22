@@ -11,9 +11,6 @@ class Paciente(BaseModel):
     alergias = db.Column(db.Text)
     doencas_cronicas = db.Column(db.Text)
     medicacoes_uso_continuo = db.Column(db.Text)
-    historico_cirurgico = db.Column(db.Text)
-    queixa_principal = db.Column(db.Text)
-    historico_tratamento_odontologico = db.Column(db.Text)
     higiene_bucal = db.Column(db.String(100))
     observacoes_gerais = db.Column(db.Text)
 
@@ -41,9 +38,6 @@ class Paciente(BaseModel):
             "alergias": self.alergias,
             "doencas_cronicas": self.doencas_cronicas,
             "medicacoes_uso_continuo": self.medicacoes_uso_continuo,
-            "historico_cirurgico": self.historico_cirurgico,
-            "queixa_principal": self.queixa_principal,
-            "historico_tratamento_odontologico": self.historico_tratamento_odontologico,
             "higiene_bucal": self.higiene_bucal,
             "observacoes_gerais": self.observacoes_gerais,
             "problema_cardiaco": self.problema_cardiaco,

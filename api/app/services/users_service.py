@@ -117,6 +117,7 @@ class UserService:
         lista = []
         for p in pacientes:
             lista.append({
+                "id": p.id,
                 "nome": p.nome,
                 "email": p.email,
                 "cpf": p.cpf,
@@ -128,3 +129,23 @@ class UserService:
     @staticmethod
     def paciente_por_cpf(cpf):
         return Paciente.query.filter_by(cpf=cpf).first_or_404()
+    @staticmethod
+    def editar_paciente_info_medica(cpf, dados):
+        paciente = Paciente.query.filter_by(cpf=cpf).first()
+
+        if not paciente:
+            return {'erro': 'Paciente não encontrado'}, 404
+
+        campos_editaveis = [
+            "alergias", "doencas_cronicas", "medicacoes_uso_continuo"
+            , "higiene_bucal", "observacoes_gerais",
+            "problema_cardiaco", "diabetico", "fumante", "gestante",
+            "aparelho_ortodontico", "usa_protese"
+        ]
+
+        for campo in campos_editaveis:
+            if campo in dados:
+                setattr(paciente, campo, dados[campo])
+
+        db.session.commit()
+        return {'mensagem': 'Informações do paciente atualizadas com sucesso'}, 200

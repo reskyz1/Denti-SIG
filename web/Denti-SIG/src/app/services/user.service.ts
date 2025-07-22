@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment'; // ajuste se mover o arquivo
+import { ConsultaRetornada } from '../models/consultaRetornada';
 
 /*──────────────────────── DTOs ────────────────────────*/
 export interface RegisterDentistDTO {
@@ -41,6 +42,7 @@ export interface UsuarioToken {
 }
 
 export interface MensagemResposta {
+  id: number;
   mensagem: string;
 }
 
@@ -84,6 +86,28 @@ export interface Paciente {
   convenio?: string;                   // Convênio médico do paciente, opcional
   numero_convenio?: string;            // Número do convênio do paciente, opcional
 }
+export interface Consulta {
+  id: number;
+  data: string; // formato: YYYY-MM-DD
+  hora: string; // formato: HH:MM
+  duracao: number;
+  observacoes?: string;
+  procedimento?: string;
+  status: 'agendada' | 'realizada' | 'cancelada';
+
+  paciente_id: number;
+  dentista_id: number;
+
+  // Se você estiver retornando os objetos relacionados:
+  paciente?: {
+    id: number;
+    nome: string;
+  };
+  dentista?: {
+    id: number;
+    nome: string;
+  };
+}
 
 
 /*─────────────────────── Service ───────────────────────*/
@@ -115,8 +139,16 @@ export class UsersApiService {
     return this.http.get<Paciente[]>(`${this.base}/pacientes`);
   }
 
+  listarPacientesNormal(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/pacientes`);
+  }
+
   pacientePorCpf(cpf: string | number): Observable<Paciente> {
     return this.http.get<Paciente>(`${this.base}/pacientes/${cpf}`);
+  }
+    
+  editarPacienteInfoMedica(cpf: string, dados: Partial<Paciente>): Observable<MensagemResposta> {
+    return this.http.put<MensagemResposta>(`${this.base}/paciente/${cpf}`, dados);
   }
 }
 
@@ -127,8 +159,14 @@ export class ConsultasApiService {
   private readonly base = environment.apiBase;
 
   criarConsulta(body: any): Observable<MensagemResposta> {
-    return this.http.post<MensagemResposta>(`${this.base}/consultas`, body);
-  }
+    const token = localStorage.getItem('token');
+
+    const headers = new HttpHeaders({
+     Authorization: `Bearer ${token}`
+    });
+
+  return this.http.post<MensagemResposta>(`${this.base}/consultas`, body, { headers });
+}
 
   atualizarConsulta(id: number, body: any): Observable<MensagemResposta> {
     return this.http.put<MensagemResposta>(`${this.base}/consultas/${id}`, body);
@@ -137,23 +175,26 @@ export class ConsultasApiService {
   deletarConsulta(id: number): Observable<MensagemResposta> {
     return this.http.delete<MensagemResposta>(`${this.base}/consultas/${id}`);
   }
-
-  listarConsultas(params?: Record<string, string>): Observable<any[]> {
-    return this.http.get<any[]>(`${this.base}/consultas`, { params });
+  listarConsultas(params?: Record<string, string>): Observable<{mensagem:ConsultaRetornada[]}> {
+    return this.http.get<{mensagem:ConsultaRetornada[]}>(`${this.base}/consultas`, { params });
   }
 
-  consultasProximas(pacienteId: number): Observable<any> {
-    return this.http.get(`${this.base}/consultas/proximas/${pacienteId}`);
+  consultasProximas(pacienteId: number): Observable<Consulta[]> {
+    return this.http.get<Consulta[]>(`${this.base}/consultas/proximas/${pacienteId}`);
   }
 
-  listarConsultasPaciente(pacienteId: number): Observable<any> {
-    return this.http.get(`${this.base}/consultas/paciente/${pacienteId}`);
+  listarConsultasPaciente(pacienteId: number): Observable<Consulta[]> {
+    return this.http.get<Consulta[]>(`${this.base}/consultas/paciente/${pacienteId}`);
   }
 
-  listarConsultasDentistaPorData(dentistaId: number, dataISO: string): Observable<any> {
+  listarConsultasDentistaPorData(dentistaId: number, dataISO: string): Observable<Consulta[]> {
     const params = new HttpParams()
       .set('dentista_id', dentistaId)
-      .set('data', dataISO); // 'YYYY-MM-DD'
-    return this.http.get(`${this.base}/consultas/dentista`, { params });
+      .set('data', dataISO);
+    return this.http.get<Consulta[]>(`${this.base}/consultas/dentista`, { params });
+  }
+
+  getConsultaPorId(id: number): Observable<Consulta> {
+    return this.http.get<Consulta>(`${this.base}/consulta/${id}`);
   }
 }

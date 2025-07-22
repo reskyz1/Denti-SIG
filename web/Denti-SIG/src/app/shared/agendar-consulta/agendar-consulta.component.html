@@ -13,7 +13,9 @@
   <div class="form-group">
     <label>Paciente</label>
     <mat-form-field appearance="outline" class="custom-field">
-      <input matInput placeholder="Busque por nome, telefone, CPF ou cadastre um novo paciente" [(ngModel)]="paciente">
+      <mat-select [(ngModel)]="pacienteSelecionado">
+        <mat-option *ngFor="let p of pacientes" [value]="p">{{ p.nome }}</mat-option>
+      </mat-select>
     </mat-form-field>
   </div>
 

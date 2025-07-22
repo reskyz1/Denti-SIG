@@ -147,7 +147,7 @@ def listar_consultas():
                 'paciente_id': c.paciente_id,
                 'dentista_id': c.dentista_id
             })
-        return jsonify({'mensagem': resultado}), 200
+        return jsonify(resultado), 200
     except Exception as e:
         return jsonify({'erro': str(e)}), 400
     
@@ -210,3 +210,14 @@ def prontuario_paciente(cpf, user_type):
     except Exception as e:
         return jsonify({'erro': str(e)}), 400
     
+@users_bp.route('/paciente/<string:cpf>', methods=['PUT'])
+def atualizar_info_medica_paciente(cpf):
+    dados = request.get_json()
+    return UserService.editar_paciente_info_medica(cpf, dados)
+@users_bp.route('/consulta/<int:id>', methods=['GET'])
+def get_consulta_por_id(id):
+    consulta = ConsultaService.consulta_por_id(id)
+    if not consulta:
+        return jsonify({"erro": "Consulta não encontrada"}), 404
+
+    return jsonify(consulta), 200

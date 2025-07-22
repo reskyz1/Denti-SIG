@@ -29,7 +29,8 @@ class ConsultaService:
                 observacoes=data_dict.get('observacoes'),
                 status=data_dict.get('status', 'agendada'),
                 paciente_id=data_dict['paciente_id'],
-                dentista_id=data_dict['dentista_id']
+                dentista_id=data_dict['dentista_id'],
+                 procedimento = data_dict['procedimento']
             )
         db.session.add(nova)
         db.session.commit()
@@ -173,7 +174,23 @@ class ConsultaService:
                 'dentista_id': c.dentista_id
             })
         return resultado
-    
+    @staticmethod
+    def consulta_por_id(id):
+        consulta = Consulta.query.get(id)
+        if not consulta:
+            return None
+
+        return {
+            "id": consulta.id,
+            "data": consulta.data.isoformat(),
+            "hora": consulta.hora.strftime("%H:%M"),
+            "duracao": consulta.duracao,
+            "observacoes": consulta.observacoes,
+            "procedimento": consulta.procedimento,
+            "status": consulta.status,
+            "paciente_id": consulta.paciente_id,
+            "dentista_id": consulta.dentista_id
+        }
     def listar_consultas_por_data(dentista_id, data_str):
         data = datetime.strptime(data_str, '%Y-%m-%d').date()
         consultas = Consulta.query.filter_by(dentista_id=dentista_id, data=data).order_by(Consulta.hora.asc()).all()
@@ -247,7 +264,6 @@ def criar_lista_horario(dia_base, dias: int = 7):
         dia_base += datetime.timedelta(days=1)  
 
     return lista
-
 def validar_disponibilidade_consulta(data, hora, dentista_id):  
     """
     Raises:
