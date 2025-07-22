@@ -8,9 +8,15 @@ from app.utils.exceptions.permissao_negada import PermissaoNegada
 
 class ConsultaService:
     @staticmethod
-    def criar_consulta(data_dict, user_type):
+    def criar_consulta(data_dict, user_type, user_id):
         if user_type not in ['dentista', 'secretario']:
             raise PermissaoNegada("Somente desntistas ou secretários podem criar consultas.")
+        if user_type == 'dentista':
+            if 'paciente_id' in data_dict:
+                if data_dict['dentista_id'] != user_id:
+                    raise PermissaoNegada("Dentistas só podem marcar sua propria consulta.")
+            else:
+                data_dict['dentista_id'] = user_id
         validar_disponibilidade_consulta(data_dict['data'],data_dict['hora'], data_dict['dentista_id']) 
         duracao=data_dict.get('duracao')
 
