@@ -134,7 +134,7 @@ getNomePacientePorId(id: number): string {
   carregarConsultasComPacientes(): void {
     this.consultaService.listarConsultas().subscribe({
       next: (res) => {
-        this.consultas = res.mensagem;
+        this.consultas = res;
 
         this.userService.listarPacientesNormal().subscribe({
           next: (res) => {
@@ -157,12 +157,14 @@ getNomePacientePorId(id: number): string {
 
 filtrarConsultasPorDentista(): void {
   if (!this.dentistaSelecionado) return;
-
+  console.log('as minhas consultas são')
+  console.log(this.consultas)
   this.consultasDentista = this.consultas.filter(
     (consulta) => consulta.dentista_id === this.dentistaSelecionado!.id
   );
 
   if (this.calendarOptions) {
+    console.log(this.consultasDentista);
     this.calendarOptions.events = this.montarEventos(this.consultasDentista);
   }
 }

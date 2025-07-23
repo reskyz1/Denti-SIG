@@ -175,8 +175,8 @@ export class ConsultasApiService {
   deletarConsulta(id: number): Observable<MensagemResposta> {
     return this.http.delete<MensagemResposta>(`${this.base}/consultas/${id}`);
   }
-  listarConsultas(params?: Record<string, string>): Observable<{mensagem:ConsultaRetornada[]}> {
-    return this.http.get<{mensagem:ConsultaRetornada[]}>(`${this.base}/consultas`, { params });
+  listarConsultas(params?: Record<string, string>): Observable<ConsultaRetornada[]> {
+    return this.http.get<ConsultaRetornada[]>(`${this.base}/consultas`, { params });
   }
 
   consultasProximas(pacienteId: number): Observable<Consulta[]> {
