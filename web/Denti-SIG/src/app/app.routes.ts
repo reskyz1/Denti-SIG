@@ -25,5 +25,7 @@ export const routes: Routes = [
     {path: 'initial', component: InitialComponent},
     {path: 'pacientes', component: PacientesListaComponent},
     {path: 'consulta/:id', component: ConsultaComponent},
-    {path: 'consultas', component: ListaConsultasComponent}
+    {path: 'consultas', component: ListaConsultasComponent},
+    {path: 'inicio-paciente', loadComponent: () => import('./inicio-paciente-teste/inicio-paciente-teste.component').then(m => m.InicioPacienteTesteComponent)},
+    {path: 'inicio-gerente', loadComponent: () => import('./inicio-gerente/inicio-gerente.component').then(m => m.InicioGerenteComponent)}
 ];

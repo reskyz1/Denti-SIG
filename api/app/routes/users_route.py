@@ -88,10 +88,14 @@ def paciente_por_cpf(cpf):
 
 @users_bp.route('/consultas', methods=['POST'])
 @requires_auth()
-def criar_consulta(user_type):
+def criar_consulta(user_type, user_id):
     try:
         dados = request.json
-        consulta = ConsultaService.criar_consulta(dados, user_type)
+
+        print("dados recebidos:", dados)
+        print("tipo dos campos:", {k: type(v) for k, v in dados.items()})
+
+        consulta = ConsultaService.criar_consulta(dados, user_type, user_id)
         return jsonify({'mensagem': 'Consulta criada com sucesso', 'id': consulta.id}), 201
     except PermissaoNegada as e:
         return jsonify({'erro': str(e)}), 403
