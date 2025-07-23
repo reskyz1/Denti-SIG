@@ -45,17 +45,17 @@ class ConsultaService:
         # Mudar a data e o horario
         if 'data' in data_dict and 'hora' in data_dict:
             if data_dict['data'] != consulta.data and data_dict['hora'] != consulta.hora:
-                validar_disponibilidade_consulta(data_dict['data'], data_dict['hora'], consulta.dentista_id)
+                #validar_disponibilidade_consulta(data_dict['data'], data_dict['hora'], consulta.dentista_id)
                 consulta.data = datetime.strptime(data_dict['data'], '%Y-%m-%d').date()
                 consulta.hora = datetime.strptime(data_dict['hora'], '%H:%M').time()
         
         if 'data' in data_dict:
             if data_dict['data'] != consulta.data:
-                validar_disponibilidade_consulta(data_dict['data'], consulta.hora, consulta.dentista_id)
+                #validar_disponibilidade_consulta(data_dict['data'], consulta.hora, consulta.dentista_id)
                 consulta.data = datetime.strptime(data_dict['data'], '%Y-%m-%d').date()
         if 'hora' in data_dict:
             if data_dict['hora'] != consulta.hora:
-                validar_disponibilidade_consulta(consulta.data,data_dict['hora'], consulta.dentista_id)
+                #validar_disponibilidade_consulta(consulta.data,data_dict['hora'], consulta.dentista_id)
                 consulta.hora = datetime.strptime(data_dict['hora'], '%H:%M').time()
         if 'duracao' in data_dict:
             duracao=data_dict.get('duracao')

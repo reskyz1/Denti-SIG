@@ -17,6 +17,7 @@ import { MatDialog } from '@angular/material/dialog';
 import {UsersApiService, ConsultasApiService} from 'src/app/services/user.service';
 import {ConsultaRetornada} from 'src/app/models/consultaRetornada';
 import {Paciente} from 'src/app/models/paciente';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-initial',
@@ -46,7 +47,7 @@ export class InitialComponent implements OnInit{
   dentistaSelecionado?: Dentista
   popUp: boolean = false
   
-  constructor(@Inject(PLATFORM_ID) private platformId: Object,private dialog: MatDialog, private userService: UsersApiService, private consultaService: ConsultasApiService) {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object,private dialog: MatDialog, private userService: UsersApiService, private consultaService: ConsultasApiService,private router: Router,) {
     if (isPlatformBrowser(this.platformId)) {
       this.calendarOptions = {
         initialView: 'timeGridWeek',
@@ -57,10 +58,20 @@ export class InitialComponent implements OnInit{
         slotDuration: '00:15:00',
         slotLabelInterval: '01:00:00',
         locale: ptLocale,
-       titleFormat: { year: 'numeric', month: 'long' },
-       height: 'auto'
+        titleFormat: { year: 'numeric', month: 'long' },
+        height: 'auto',
+        eventClick: this.onEventClick.bind(this),
+        eventClassNames: (arg) => {
+          const status = arg.event.extendedProps['status'];
+          return status === 'realizada' ? ['realizada-event'] : [];
+        },
       };
     }
+  }
+
+  onEventClick(info: any): void {
+  const consultaId = info.event.extendedProps.consultaId;
+  this.router.navigate(['/consulta', consultaId]);
   }
 
   selecionarDentista(dentista: Dentista){
@@ -97,7 +108,11 @@ getNomePacientePorId(id: number): string {
     return consultas.map((consulta) => ({
       title: `${this.getNomePacientePorId(consulta.paciente_id)}`,
       start: consulta.inicio,
-      end: consulta.fim
+      end: consulta.fim,
+      extendedProps: {
+      consultaId: consulta.id,
+      status: consulta.status
+    },
     }));
   }
 
@@ -115,12 +130,12 @@ getNomePacientePorId(id: number): string {
         if (tipoUsuario === 'dentista' && usuarioJson) {
           const usuario = JSON.parse(usuarioJson);
           dentista = this.dentistas.find(d => d.id === usuario.id);
-        } else {
-          dentista = this.dentistas[0];
-        }
+        } 
 
         if (dentista) {
           this.selecionarDentista(dentista);
+          this.dentistas = [];
+          this.dentistas.push(dentista);
         }
       }
     },
@@ -155,24 +170,23 @@ getNomePacientePorId(id: number): string {
     });
 }
 
+
 filtrarConsultasPorDentista(): void {
   if (!this.dentistaSelecionado) return;
-  console.log('as minhas consultas são')
-  console.log(this.consultas)
+
   this.consultasDentista = this.consultas.filter(
     (consulta) => consulta.dentista_id === this.dentistaSelecionado!.id
   );
 
   if (this.calendarOptions) {
-    console.log(this.consultasDentista);
     this.calendarOptions.events = this.montarEventos(this.consultasDentista);
   }
 }
 
 
   ngOnInit(): void {
-  this.carregarDentistas();
-  this.carregarConsultasComPacientes();
+      this.carregarDentistas();
+      this.carregarConsultasComPacientes();
 }
 
 

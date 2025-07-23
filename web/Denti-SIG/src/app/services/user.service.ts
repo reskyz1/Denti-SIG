@@ -169,11 +169,23 @@ export class ConsultasApiService {
 }
 
   atualizarConsulta(id: number, body: any): Observable<MensagemResposta> {
-    return this.http.put<MensagemResposta>(`${this.base}/consultas/${id}`, body);
+    const token = localStorage.getItem('token');
+
+    const headers = new HttpHeaders({
+     Authorization: `Bearer ${token}`
+    });
+
+    return this.http.put<MensagemResposta>(`${this.base}/consultas/${id}`, body, { headers });
   }
 
   deletarConsulta(id: number): Observable<MensagemResposta> {
-    return this.http.delete<MensagemResposta>(`${this.base}/consultas/${id}`);
+    const token = localStorage.getItem('token');
+
+    const headers = new HttpHeaders({
+     Authorization: `Bearer ${token}`
+    });
+
+    return this.http.delete<MensagemResposta>(`${this.base}/consultas/${id}`,{headers});
   }
   listarConsultas(params?: Record<string, string>): Observable<ConsultaRetornada[]> {
     return this.http.get<ConsultaRetornada[]>(`${this.base}/consultas`, { params });
