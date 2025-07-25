@@ -98,7 +98,11 @@ class ConsultaService:
             query = query.filter(Consulta.data == filtros['dentista_id'])
         if 'paciente_id' in filtros:
             query = query.filter(Consulta.data == filtros['paciente_id'])
-        
+
+        # validar dentista id
+        if user_type == 'dentista':
+            query = [c for c in query if c.dentista_id == user_id]
+
         return query.all()
     
     @staticmethod
@@ -107,8 +111,6 @@ class ConsultaService:
         Return:
             list of tuples (date, time)
         """
-        if user_type not in ['dentista', 'secretario']:
-            raise PermissaoNegada("Somente pacientes ou secretários podem criar consultas.")
         
         dia = datetime.date.today()
         hora = datetime.time.now()
@@ -121,7 +123,7 @@ class ConsultaService:
         return horarios_disp
     
     @staticmethod
-    def listar_horarios_diponiveis(user_type, dentista_id, dia, user_id):
+    def listar_horarios_diponiveis(user_type, user_id, dentista_id, dia):
         validar_permissao(user_type)
         validar_ds_id(user_type, user_id, dentista_id)
         

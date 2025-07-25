@@ -193,7 +193,7 @@ def listar_consultas_por_data(user_id, user_type):
 def listar_horarios_diponiveis(user_type, user_id):
     dados = request.json
     try:
-        horarios = ConsultaService.listar_horarios_diponiveis(user_type, dados["dentista_id"], dia = dados["data"], user_id = user_id)
+        horarios = ConsultaService.listar_horarios_diponiveis(user_type, user_id, dados["dentista_id"], dia = dados["data"])
         return jsonify({'mensagem': horarios}), 200
     except PermissaoNegada as e:
         return jsonify({'erro': str(e)}), 403
