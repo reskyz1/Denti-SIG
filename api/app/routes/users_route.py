@@ -172,7 +172,7 @@ def listar_consultas_paciente(paciente_id):
         return jsonify({'erro': str(e)}), 500
     
 @users_bp.route('/consultas/dentista', methods=['GET'])
-def listar_consultas_por_data():
+def listar_consultas_por_data(user_id, user_type):
     dentista_id = request.args.get('dentista_id')
     data_str = request.args.get('data')  # Esperado no formato 'YYYY-MM-DD'
 
@@ -180,7 +180,7 @@ def listar_consultas_por_data():
         return jsonify({'erro': 'Parâmetros dentista_id e data são obrigatórios.'}), 400
 
     try:
-        consultas = ConsultaService.listar_consultas_por_data(dentista_id, data_str)
+        consultas = ConsultaService.listar_consultas_por_data(dentista_id, data_str, user_id= user_id, user_type= user_type)
         return jsonify({'mensagem': consultas}), 200
     except Exception as e:
         return jsonify({'erro': str(e)}), 500
@@ -190,10 +190,10 @@ def listar_consultas_por_data():
 # Por medico e dia 
 @users_bp.route('/consultas/horarios/disponiveis', methods=['GET'])
 @requires_auth()
-def listar_horarios_diponiveis(user_type):
+def listar_horarios_diponiveis(user_type, user_id):
     dados = request.json
     try:
-        horarios = ConsultaService.listar_horarios_diponiveis(user_type, dados["dentista_id"], dia = dados["data"])
+        horarios = ConsultaService.listar_horarios_diponiveis(user_type, dados["dentista_id"], dia = dados["data"], user_id = user_id)
         return jsonify({'mensagem': horarios}), 200
     except PermissaoNegada as e:
         return jsonify({'erro': str(e)}), 403

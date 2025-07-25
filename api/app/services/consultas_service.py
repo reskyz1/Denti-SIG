@@ -9,8 +9,7 @@ from app.utils.exceptions.permissao_negada import PermissaoNegada
 class ConsultaService:
     @staticmethod
     def criar_consulta(data_dict, user_type, user_id):
-        if user_type not in ['dentista', 'secretario']:
-            raise PermissaoNegada("Somente desntistas ou secretários podem criar consultas.")
+        validar_permissao(user_type=user_type)
         if user_type == 'dentista':
             if 'dentista_id' in data_dict:
                 if data_dict['dentista_id'] != user_id:
@@ -38,13 +37,9 @@ class ConsultaService:
 
     @staticmethod
     def atualizar_consulta(id, data_dict, user_type, user_id):
-        if user_type not in ['dentista', 'secretario']:
-            raise PermissaoNegada("Somente pacientes ou secretários podem criar consultas.")
+        validar_permissao(user_type)
         consulta = Consulta.query.get_or_404(id)
-
-        if user_type == 'dentista':
-            if consulta.dentista_id != user_id:
-                raise PermissaoNegada("Dentistas só podem atualizar sua propria consulta.")
+        validar_ds_id(user_type, user_id, consulta.dentista_id)
 
         # Mudar a data e o horario
         if 'data' in data_dict and 'hora' in data_dict:
@@ -82,20 +77,17 @@ class ConsultaService:
 
     @staticmethod
     def deletar_consulta(id, user_type, user_id):
-        if user_type not in ['dentista', 'secretario']:
-            raise PermissaoNegada("Somente pacientes ou secretários podem criar consultas.")
+        validar_permissao(user_type)
         consulta = Consulta.query.get_or_404(id)
-
-        if user_type == 'dentista':
-            if consulta.dentista_id != user_id:
-                raise PermissaoNegada("Dentistas só podem deletar sua propria consulta.")
-
+        validar_ds_id(user_type, user_id, consulta.dentista_id)
+ 
         db.session.delete(consulta)
         db.session.commit()
         return True
 
     @staticmethod
-    def listar_consultas(filtros):
+    def listar_consultas(filtros, user_type, user_id):
+        validar_permissao(user_type)
         query = Consulta.query
 
         if 'data' in filtros:
@@ -110,11 +102,14 @@ class ConsultaService:
         return query.all()
     
     @staticmethod
-    def listar_horarios_diponiveis(dentista_id, paciente_id):
+    def listar_horarios_diponiveis(dentista_id, paciente_id, user_id, user_type):
         """
         Return:
             list of tuples (date, time)
         """
+        if user_type not in ['dentista', 'secretario']:
+            raise PermissaoNegada("Somente pacientes ou secretários podem criar consultas.")
+        
         dia = datetime.date.today()
         hora = datetime.time.now()
         #Indisponibildiade do medico
@@ -126,9 +121,10 @@ class ConsultaService:
         return horarios_disp
     
     @staticmethod
-    def listar_horarios_diponiveis(user_type, dentista_id, dia):
-        if user_type not in ['dentista', 'secretario']:
-            raise PermissaoNegada("Somente pacientes ou secretários podem criar consultas.")
+    def listar_horarios_diponiveis(user_type, dentista_id, dia, user_id):
+        validar_permissao(user_type)
+        validar_ds_id(user_type, user_id, dentista_id)
+        
         dia = datetime.strptime(dia, '%Y-%m-%d').date()
         horarios = criar_lista_horario(dia, dias = 1)
         horarios_ind = Consulta.query.with_entities(Consulta.hora).filter(Consulta.data == dia, Consulta.dentista_id == dentista_id).all()
@@ -200,7 +196,9 @@ class ConsultaService:
             "paciente_id": consulta.paciente_id,
             "dentista_id": consulta.dentista_id
         }
-    def listar_consultas_por_data(dentista_id, data_str):
+    def listar_consultas_por_data(dentista_id, data_str, user_id, user_type):
+        validar_permissao(user_type)
+        validar_ds_id(user_type, user_id, dentista_id)
         data = datetime.strptime(data_str, '%Y-%m-%d').date()
         consultas = Consulta.query.filter_by(dentista_id=dentista_id, data=data).order_by(Consulta.hora.asc()).all()
 
@@ -221,8 +219,7 @@ class ConsultaService:
             })
         return resultado
     def prontuario_paciente(cpf, user_type):
-        if user_type not in ['dentista', 'secretario']:
-            raise PermissaoNegada("Somente pacientes ou secretários podem criar consultas.")
+        validar_permissao(user_type)
         paciente = Paciente.query.filter_by(cpf=cpf).first()
         if paciente:
             consultas = Consulta.query.filter_by(paciente_id = paciente.id).order_by(Consulta.hora.asc()).all()
@@ -306,6 +303,14 @@ def validar_disponibilidade_consulta(data, hora, dentista_id):
     # Verifica se o horário segue padrão de 30 em 30 minutos
     if hora.minute not in possibilidades_hora:
         raise HorarioDentistaError("Esta hora não segue o padrão de horários de consulta.", 400)
+
+def validar_permissao(user_type):
+    if user_type not in ['dentista', 'secretario']:
+            raise PermissaoNegada("Somente pacientes ou secretários podem criar consultas.")
+def validar_ds_id(user_type, user_id, ds_id):
+    if user_type == 'dentista':
+        if ds_id != user_id:
+            raise PermissaoNegada("Dentistas so tem acesso a suas proprias consultas.")
 
 class HorarioDentistaError(Exception):
     def __init__(self, error, status_code):
