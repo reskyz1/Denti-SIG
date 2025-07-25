@@ -81,10 +81,15 @@ class ConsultaService:
         return consulta
 
     @staticmethod
-    def deletar_consulta(id, user_type):
+    def deletar_consulta(id, user_type, user_id):
         if user_type not in ['dentista', 'secretario']:
             raise PermissaoNegada("Somente pacientes ou secretários podem criar consultas.")
         consulta = Consulta.query.get_or_404(id)
+
+        if user_type == 'dentista':
+            if consulta.dentista_id != user_id:
+                raise PermissaoNegada("Dentistas só podem deletar sua propria consulta.")
+
         db.session.delete(consulta)
         db.session.commit()
         return True

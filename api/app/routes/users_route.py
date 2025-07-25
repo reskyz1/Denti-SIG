@@ -104,11 +104,11 @@ def criar_consulta(user_type, user_id):
 
 @users_bp.route('/consultas/<int:id>', methods=['PUT'])
 @requires_auth()
-def atualizar_consulta(id,user_type):
+def atualizar_consulta(id,user_type, user_id):
     try:
         dados = request.json
         if(dados.get("status") == "cancelada"):
-            ConsultaService.deletar_consulta(id,user_type)
+            ConsultaService.deletar_consulta(id,user_type, user_id)
             return jsonify({'mensagem': 'Consulta cancelada com sucesso'})
         ConsultaService.atualizar_consulta(id, dados, user_type, user_id)
         return jsonify({'mensagem': 'Consulta atualizada com sucesso'})
@@ -119,9 +119,9 @@ def atualizar_consulta(id,user_type):
 
 @users_bp.route('/consultas/<int:id>', methods=['DELETE'])
 @requires_auth()
-def deletar_consulta(id, user_type):
+def deletar_consulta(id, user_type, user_id):
     try:
-        ConsultaService.deletar_consulta(id, user_type)
+        ConsultaService.deletar_consulta(id, user_type, user_id)
         return jsonify({'mensagem': 'Consulta deletada com sucesso'})
     except PermissaoNegada as e:
         return jsonify({'erro': str(e)}), 403
