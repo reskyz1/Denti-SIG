@@ -32,6 +32,10 @@
     font-family: Arial, Helvetica, sans-serif;
     font-size: 25px;
   }
+  .headerbuttonB {
+    margin-right: 20px;
+    white-space: nowrap;
+  }
   .loginbutton {
     padding: 5px;
     color: rgb(255, 255, 255);
@@ -65,4 +69,66 @@
     color: rgb(63, 63, 63);
     font-family: Arial, Helvetica, sans-serif;
     font-size: 15px;
+  }
+  .img-responsive{
+    float:right;
+    width:40%;
+  }
+  .textcontainer01{
+    float:left;
+    width:45%;
+  }
+  .headergroup01{
+    grid-area: "header";
+  }
+  .footergroupA{
+    width:20%;
+    float:left;
+  }
+  .footergroupB{
+    margin-left: 20%;
+  }
+  @media only screen and (max-width: 600px) {
+    .container {
+      display: grid;
+      grid-template-areas:
+        "header"
+        "header2"
+        "content"
+        "img"
+        "footer";
+      grid-template-columns: 1fr;
+      padding: 5px;
+    }
+    .img-responsive{
+      grid-area: "img";
+      float:left;
+      width:100%;
+    }
+    .textcontainer01{
+      float:left;
+      width:100%;
+    }
+    .texto01{
+      text-align: center;
+    }
+    .texto02{
+      text-align: center;
+    }
+    .headergroup01{
+      grid-area: "header2";
+      width:100%;
+    }
+    .headerbuttonB {
+      width:100%;
+      margin-right: 10px;
+    }
+    .footergroupA{
+      width:20%;
+      margin-right: 10%;
+      float:left;
+    }
+    .footergroupB{
+      margin-left: 0%;
+    }
   }

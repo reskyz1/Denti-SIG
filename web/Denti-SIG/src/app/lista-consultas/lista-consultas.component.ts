@@ -26,8 +26,8 @@ export class ListaConsultasComponent implements OnInit {
     this.consultaService.listarConsultas().subscribe({
       next: (data) => {
         console.log('Consultas recebidas:', data);
-        this.consultas = data.mensagem;
-        this.consultasFiltradas = data.mensagem;
+        //this.consultas = data;
+        //this.consultasFiltradas = data;
       },
       error: (err) => console.error('Erro ao carregar consultas', err)
     });

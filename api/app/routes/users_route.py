@@ -104,9 +104,12 @@ def criar_consulta(user_type, user_id):
 
 @users_bp.route('/consultas/<int:id>', methods=['PUT'])
 @requires_auth()
-def atualizar_consulta(id, user_id, user_type):
+def atualizar_consulta(id,user_type):
     try:
         dados = request.json
+        if(dados.get("status") == "cancelada"):
+            ConsultaService.deletar_consulta(id,user_type)
+            return jsonify({'mensagem': 'Consulta cancelada com sucesso'})
         ConsultaService.atualizar_consulta(id, dados, user_type, user_id)
         return jsonify({'mensagem': 'Consulta atualizada com sucesso'})
     except PermissaoNegada as e:

@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
+
 @Component({
   selector: 'app-consulta',
   standalone: true,
@@ -48,11 +49,11 @@ export class ConsultaComponent implements OnInit {
 
   salvarConsulta() {
     this.consultaService.atualizarConsulta(this.consulta.id, this.consulta).subscribe(() => {
-      this.router.navigate(['/consultas']);
+      this.router.navigate(['/initial']);
     });
   }
 
   cancelar() {
-    this.router.navigate(['/consultas']);
+    this.router.navigate(['/initial']);
   }
 }

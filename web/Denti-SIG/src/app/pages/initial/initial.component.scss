@@ -58,6 +58,12 @@
   }
 }
 
+.realizada-event {
+  background-color: #d4edda !important; // verde claro
+  color: #155724 !important;
+  border: none !important;
+}
+
 .botao-add-consulta {
   position: absolute;
   top: 160px; 
@@ -165,6 +171,12 @@
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
 
+  .realizada-event {
+    background-color: #d4edda !important; 
+    color: #155724 !important;
+    border: none !important;
+  }
+
   /* Horário do evento */
   .fc-event-time {
     font-weight: 500;
@@ -193,6 +205,8 @@
     text-transform: capitalize; 
     color:#4d4d4d;
   }
+
+
 
   .fc .fc-button {
     background-color: #2f80ed;
