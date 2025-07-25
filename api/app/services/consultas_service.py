@@ -12,7 +12,7 @@ class ConsultaService:
         if user_type not in ['dentista', 'secretario']:
             raise PermissaoNegada("Somente desntistas ou secretários podem criar consultas.")
         if user_type == 'dentista':
-            if 'paciente_id' in data_dict:
+            if 'dentista_id' in data_dict:
                 if data_dict['dentista_id'] != user_id:
                     raise PermissaoNegada("Dentistas só podem marcar sua propria consulta.")
             else:
@@ -37,10 +37,14 @@ class ConsultaService:
         return nova
 
     @staticmethod
-    def atualizar_consulta(id, data_dict, user_type):
+    def atualizar_consulta(id, data_dict, user_type, user_id):
         if user_type not in ['dentista', 'secretario']:
             raise PermissaoNegada("Somente pacientes ou secretários podem criar consultas.")
         consulta = Consulta.query.get_or_404(id)
+
+        if user_type == 'dentista':
+            if consulta.dentista_id != user_id:
+                raise PermissaoNegada("Dentistas só podem atualizar sua propria consulta.")
 
         # Mudar a data e o horario
         if 'data' in data_dict and 'hora' in data_dict:

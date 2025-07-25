@@ -107,7 +107,7 @@ def criar_consulta(user_type, user_id):
 def atualizar_consulta(id, user_id, user_type):
     try:
         dados = request.json
-        ConsultaService.atualizar_consulta(id, dados, user_type)
+        ConsultaService.atualizar_consulta(id, dados, user_type, user_id)
         return jsonify({'mensagem': 'Consulta atualizada com sucesso'})
     except PermissaoNegada as e:
         return jsonify({'erro': str(e)}), 403
