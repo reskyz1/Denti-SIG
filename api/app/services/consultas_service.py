@@ -106,23 +106,6 @@ class ConsultaService:
         return query.all()
     
     @staticmethod
-    def listar_horarios_diponiveis(dentista_id, paciente_id, user_id, user_type):
-        """
-        Return:
-            list of tuples (date, time)
-        """
-        
-        dia = datetime.date.today()
-        hora = datetime.time.now()
-        #Indisponibildiade do medico
-        horarios_ind = Consulta.query.with_entities(Consulta.dia, Consulta.hora).filter(Consulta.data >= dia, Consulta.data > hora, Consulta.dentista_id == dentista_id).all()
-        #Indisponibildiade do Paciente
-        horarios_ind.append(Consulta.query.with_entities(Consulta.dia,Consulta.hora).filter(Consulta.data >= dia, Consulta.data > hora, Consulta.paciente_id == paciente_id).all())
-        horarios = criar_lista_horario(dia)
-        horarios_disp = [h for h in horarios if h not in horarios_ind]
-        return horarios_disp
-    
-    @staticmethod
     def listar_horarios_diponiveis(user_type, user_id, dentista_id, dia):
         validar_permissao(user_type)
         validar_ds_id(user_type, user_id, dentista_id)
