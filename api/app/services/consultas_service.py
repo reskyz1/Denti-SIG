@@ -2,9 +2,13 @@
 
 from app.models.consulta import Consulta
 from app.models.paciente import Paciente
+from app.models.dentista import Dentista
 from app import db
 from datetime import datetime, timedelta, date
 from app.utils.exceptions.permissao_negada import PermissaoNegada
+from app.utils.email import Email
+
+email = Email()
 
 class ConsultaService:
     @staticmethod
@@ -31,14 +35,21 @@ class ConsultaService:
                 dentista_id=data_dict['dentista_id'],
                  procedimento = data_dict['procedimento']
             )
+        ds = Dentista.query.with_entities(Dentista.nome).filter(Dentista.id == data_dict['dentista_id']).one()
+        pc = Paciente.query.with_entities(Paciente.nome, Paciente.email).filter(Paciente.id == data_dict['paciente_id']).one()
+        msg = f"Consulta com o doutor {ds.nome} as {nova.hora} confirmada"
+        assunto = "Confirmação de Consulta"
+        email.enviar_email([pc.email], assunto,msg)
+
         db.session.add(nova)
         db.session.commit()
+        
         return nova
 
     @staticmethod
     def atualizar_consulta(id, data_dict, user_type, user_id):
         validar_permissao(user_type)
-        consulta = Consulta.query.get_or_404(id)
+        consulta = Dentista.query.get_or_404(id)
         validar_ds_id(user_type, user_id, consulta.dentista_id)
 
         # Mudar a data e o horario

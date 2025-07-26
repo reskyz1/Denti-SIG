@@ -85,7 +85,7 @@ def paciente_por_cpf(cpf):
     except Exception as e:
         return jsonify({'erro': str(e)}), 400
 
-
+# manda email.
 @users_bp.route('/consultas', methods=['POST'])
 @requires_auth()
 def criar_consulta(user_type, user_id):
