@@ -37,7 +37,7 @@ class ConsultaService:
             )
         ds = Dentista.query.with_entities(Dentista.nome).filter(Dentista.id == data_dict['dentista_id']).one()
         pc = Paciente.query.with_entities(Paciente.nome, Paciente.email).filter(Paciente.id == data_dict['paciente_id']).one()
-        msg = f"Consulta com o doutor {ds.nome} as {nova.hora} confirmada"
+        msg = f"Consulta com o doutor {ds.nome} no dia {nova.data} as {nova.hora} confirmada"
         assunto = "Confirmação de Consulta"
         email.enviar_email([pc.email], assunto,msg)
 
