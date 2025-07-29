@@ -1,15 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import {UsersApiService, ConsultasApiService} from 'src/app/services/user.service';
+import {UsersApiService, ConsultasApiService, Consulta} from 'src/app/services/user.service';
 import {Paciente} from 'src/app/models/paciente';
-interface Consulta {
-  data: Date;
-  hora: string;
-  dentista: string;
-  finalizada: boolean;
-  relatorioIA?: string;
-}
 
 @Component({
   selector: 'app-inicio-paciente',
@@ -18,22 +11,18 @@ interface Consulta {
   styleUrl: './inicio-paciente-teste.component.scss'
 })
 export class InicioPacienteTesteComponent {
-  pacientes: Paciente[] = []; 
+  pacientes: Paciente[] = [];
   pacienteUser: Paciente | undefined;
   idPaciente : number | undefined;
   email = '';
   celular = '';
   dataNascimento = '';
-  genero = '';
   cpf = '';
   rg = '';
   endereco = '';
   nomePaciente = '';
 
-  consultas: Consulta[] = [
-    { data: new Date(Date.now() + 24 * 60 * 60 * 1000), hora: '14:00', dentista: 'João Silva', finalizada: false },
-    { data: new Date(Date.now() - 48 * 60 * 60 * 1000), hora: '07:00', dentista: 'Ana Souza', finalizada: true, relatorioIA: 'link-do-relatorio' }
-  ];
+  consultas: Consulta[] = [];
 
   constructor(private userService: UsersApiService, private consultaService: ConsultasApiService,private router: Router,) {}
 
@@ -41,7 +30,10 @@ export class InicioPacienteTesteComponent {
     const agora = new Date();
     const limite = new Date();
     limite.setHours(limite.getHours() + 72);
-    return this.consultas.filter(c => c.data > agora && c.data < limite);
+    return this.consultas.filter(c => {
+      const dataConsulta = new Date(c.data + 'T' + c.hora);
+      return dataConsulta > agora && dataConsulta < limite;
+    });
   }
 
   irParaHistorico() {
@@ -63,13 +55,29 @@ export class InicioPacienteTesteComponent {
               this.cpf = this.pacienteUser.cpf
               this.endereco = this.pacienteUser.endereco
               this.dataNascimento = this.pacienteUser.data_nascimento
+
+              // Buscar consultas do paciente
+              this.carregarConsultasPaciente();
             }
-            
+
          },
           error: (error) => {
            console.error('Erro ao buscar pacientes', error);
           }
         });
       }
+  }
+
+  carregarConsultasPaciente(): void {
+    if (this.idPaciente) {
+      this.consultaService.listarConsultasPaciente(this.idPaciente).subscribe({
+        next: (consultas) => {
+          this.consultas = consultas;
+        },
+        error: (error) => {
+          console.error('Erro ao buscar consultas do paciente', error);
+        }
+      });
+    }
   }
 }

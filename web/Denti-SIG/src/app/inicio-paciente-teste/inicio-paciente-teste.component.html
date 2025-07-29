@@ -29,10 +29,6 @@
         <output>{{ dataNascimento }}</output>
       </div>
       <div class="info-field">
-        <label>Gênero</label>
-        <output>{{ genero }}</output>
-      </div>
-      <div class="info-field">
         <label>CPF</label>
         <output>{{ cpf }}</output>
       </div>
@@ -64,16 +60,13 @@
         <div *ngIf="consultas.length === 0" class="sem-consultas">
           Nenhuma consulta encontrada.
         </div>
-        <div *ngFor="let consulta of consultas" class="consulta-item">
-          <span class="consulta-data">{{ consulta.data | date:'shortDate' }} {{ consulta.hora }}</span>
-          <span class="consulta-dentista">Dr(a). {{ consulta.dentista }}</span>
-          <span class="consulta-status" [ngClass]="{'finalizada': consulta.finalizada, 'andamento': !consulta.finalizada}">
-            {{ consulta.finalizada ? 'Finalizada' : 'Em andamento' }}
-          </span>
-          <button *ngIf="consulta.finalizada && consulta.relatorioIA" class="relatorio-btn">
-            Ver relatório IA
-          </button>
-        </div>
+                 <div *ngFor="let consulta of consultas" class="consulta-item">
+           <span class="consulta-data">{{ consulta.data | date:'shortDate' }} {{ consulta.hora }}</span>
+           <span class="consulta-dentista">Dr(a). {{ consulta.dentista?.nome || 'N/A' }}</span>
+           <span class="consulta-status" [ngClass]="{'finalizada': consulta.status === 'realizada', 'andamento': consulta.status === 'agendada'}">
+             {{ consulta.status === 'realizada' ? 'Finalizada' : consulta.status === 'agendada' ? 'Agendada' : 'Cancelada' }}
+           </span>
+         </div>
       </div>
     </div>
   </div>
