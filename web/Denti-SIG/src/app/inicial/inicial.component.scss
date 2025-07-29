@@ -5,26 +5,38 @@
       "content"
       "footer";
     grid-template-columns: 1fr;
-    padding: 5px;
+    padding: 0;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    box-sizing: border-box;
   }
   .container > div {
     background-color: rgb(240, 240, 240);
     padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
   }
   .container > div.header {
     grid-area: header;
     text-align: center;
     background-color: rgb(240, 240, 240);
+    width: 100%;
+    box-sizing: border-box;
   }
   .container > div.menu {
     grid-area: menu;
   }
   .container > div.content {
     grid-area: content;
+    width: 100%;
+    box-sizing: border-box;
   }
   .container > div.footer {
     grid-area: footer;
     background-color: rgb(200, 200, 200);
+    width: 100%;
+    box-sizing: border-box;
   }
   .headerbutton {
     padding: 5px;
@@ -73,10 +85,12 @@
   .img-responsive{
     float:right;
     width:40%;
+    max-width: 40%;
   }
   .textcontainer01{
     float:left;
     width:45%;
+    max-width: 45%;
   }
   .headergroup01{
     grid-area: "header";
@@ -98,16 +112,22 @@
         "img"
         "footer";
       grid-template-columns: 1fr;
-      padding: 5px;
+      padding: 0;
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+      box-sizing: border-box;
     }
     .img-responsive{
       grid-area: "img";
       float:left;
       width:100%;
+      max-width: 100%;
     }
     .textcontainer01{
       float:left;
       width:100%;
+      max-width: 100%;
     }
     .texto01{
       text-align: center;
