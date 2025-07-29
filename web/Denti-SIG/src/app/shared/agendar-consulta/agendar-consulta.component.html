@@ -11,13 +11,23 @@
   </div>
 
   <div class="form-group">
-    <label>Paciente</label>
-    <mat-form-field appearance="outline" class="custom-field">
-      <mat-select [(ngModel)]="pacienteSelecionado">
-        <mat-option *ngFor="let p of pacientes" [value]="p">{{ p.nome }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
+  <label>Paciente</label>
+  <mat-form-field appearance="outline" class="custom-field">
+    <input
+      type="text"
+      matInput
+      [(ngModel)]="pacienteInput"
+      [matAutocomplete]="autoPaciente"
+      (ngModelChange)="filtrarPacientes()"
+      placeholder="Digite o nome do paciente"
+    />
+    <mat-autocomplete #autoPaciente="matAutocomplete" (optionSelected)="selecionarPaciente($event.option.value)">
+      <mat-option *ngFor="let p of pacientesFiltrados" [value]="p">
+        {{ p.nome }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+</div>
 
   <div class="field-row">
     <div class="form-group">

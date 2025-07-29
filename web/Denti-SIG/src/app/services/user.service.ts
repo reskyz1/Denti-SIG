@@ -188,7 +188,16 @@ export class ConsultasApiService {
     return this.http.delete<MensagemResposta>(`${this.base}/consultas/${id}`,{headers});
   }
   listarConsultas(params?: Record<string, string>): Observable<ConsultaRetornada[]> {
-    return this.http.get<ConsultaRetornada[]>(`${this.base}/consultas`, { params });
+    const token = localStorage.getItem('token');
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+     });
+
+    return this.http.get<ConsultaRetornada[]>(`${this.base}/consultas`, {
+      headers,
+      params
+      });
   }
 
   consultasProximas(pacienteId: number): Observable<Consulta[]> {

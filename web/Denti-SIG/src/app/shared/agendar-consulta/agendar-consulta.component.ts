@@ -14,7 +14,7 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { ConsultasApiService, UsersApiService } from 'src/app/services/user.service'; 
 import { MensagemResposta } from 'src/app/services/user.service'; 
 import {Paciente} from 'src/app/models/paciente';
-
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 @Component({
   selector: 'app-agendar-consulta-modal',
   standalone: true,
@@ -28,6 +28,7 @@ import {Paciente} from 'src/app/models/paciente';
     MatDatepickerModule,
     MatNativeDateModule,
     MatIconModule,
+    MatAutocompleteModule,
     NgxMaskDirective,
   ],
   providers: [provideNgxMask()],
@@ -47,6 +48,8 @@ export class AgendarConsultaComponent {
   horaConsulta: string = '';
   duracaoConsulta: number = 30;
   observacoes: string = '';
+  pacienteInput: string = '';
+  pacientesFiltrados: Paciente[] = [];
 
   cancelar() {
     console.log('Cancelado');
@@ -100,9 +103,19 @@ export class AgendarConsultaComponent {
   }
 
   ngOnInit(): void {
+    const userType = localStorage.getItem('tipo')
+    const usuarioJson = localStorage.getItem('usuario');
   this.userService.listarDentistas().subscribe({
     next: (res) => {
       this.dentistas = res;
+      if(userType === 'dentista' && usuarioJson){
+        const usuario = JSON.parse(usuarioJson);
+        const dentista = this.dentistas.find(d => d.id === usuario.id);
+        this.dentistas = [];
+        if(dentista){
+          this.dentistas.push(dentista);
+        }
+      }
     },
     error: (err) => {
       console.error('Erro ao carregar dentistas', err);
@@ -112,11 +125,24 @@ export class AgendarConsultaComponent {
   this.userService.listarPacientesNormal().subscribe({
     next: (res) => {
       this.pacientes = res;
+      this.pacientesFiltrados = [...res];
     },
     error: (err) => {
       console.error('Erro ao carregar pacientes', err);
     }
   });
+}
+
+filtrarPacientes() {
+  const termo = this.pacienteInput.toLowerCase();
+  this.pacientesFiltrados = this.pacientes.filter(p =>
+    p.nome.toLowerCase().includes(termo)
+  );
+}
+
+selecionarPaciente(paciente: Paciente) {
+  this.pacienteSelecionado = paciente;
+  this.pacienteInput = paciente.nome;
 }
 
 }

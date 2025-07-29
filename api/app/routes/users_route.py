@@ -129,11 +129,11 @@ def deletar_consulta(id, user_type, user_id):
         return jsonify({'erro': str(e)}), 400
     
 @users_bp.route('/consultas', methods=['GET'])
-def listar_consultas():
+@requires_auth()
+def listar_consultas(user_type,user_id):
     filtros = request.args.to_dict()
     try:
-        consultas = ConsultaService.listar_consultas(filtros)
-
+        consultas = ConsultaService.listar_consultas(filtros,user_type,user_id)
         resultado = []
         for c in consultas:
             fim = datetime.combine(c.data, c.hora) + timedelta(minutes=c.duracao)

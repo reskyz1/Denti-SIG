@@ -89,19 +89,18 @@ class ConsultaService:
     def listar_consultas(filtros, user_type, user_id):
         validar_permissao(user_type)
         query = Consulta.query
-
         if 'data' in filtros:
             query = query.filter(Consulta.data == filtros['data'])
         if 'status' in filtros:
-            query = query.filter(Consulta.data == filtros['status'])
+            query = query.filter(Consulta.status == filtros['status'])
         if 'dentista_id' in filtros:
-            query = query.filter(Consulta.data == filtros['dentista_id'])
+            query = query.filter(Consulta.dentista_id == filtros['dentista_id'])
         if 'paciente_id' in filtros:
-            query = query.filter(Consulta.data == filtros['paciente_id'])
+            query = query.filter(Consulta.paciente_id == filtros['paciente_id'])
 
         # validar dentista id
         if user_type == 'dentista':
-            query = [c for c in query if c.dentista_id == user_id]
+            query = query.filter(Consulta.dentista_id == user_id)
 
         return query.all()
     

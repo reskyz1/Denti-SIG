@@ -122,7 +122,8 @@ class UserService:
                 "email": p.email,
                 "cpf": p.cpf,
                 "data_nascimento": str(p.data_nascimento),
-                "telefone": p.telefone
+                "telefone": p.telefone,
+                "endereco" : p.endereco
             })
         return lista
     

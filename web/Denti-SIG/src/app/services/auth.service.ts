@@ -38,7 +38,7 @@ export class AuthService {
           // Redirecionamento
           switch (res.tipo) {
             case 'paciente':
-              this.router.navigate(['/initial']);
+              this.router.navigate(['/inicio-paciente']);
               break;
             case 'dentista':
               this.router.navigate(['/initial']);
