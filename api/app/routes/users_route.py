@@ -167,7 +167,7 @@ def consultas_proximas(paciente_id):
 def listar_consultas_paciente(paciente_id):
     try:
         consultas = ConsultaService.listar_consultas_paciente(paciente_id)
-        return jsonify({'mensagem': consultas}), 200
+        return jsonify(consultas), 200
     except Exception as e:
         return jsonify({'erro': str(e)}), 500
     

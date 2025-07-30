@@ -55,7 +55,7 @@ export class InicioPacienteTesteComponent {
               this.cpf = this.pacienteUser.cpf
               this.endereco = this.pacienteUser.endereco
               this.dataNascimento = this.pacienteUser.data_nascimento
-
+              this.nomePaciente = this.pacienteUser.nome
               // Buscar consultas do paciente
               this.carregarConsultasPaciente();
             }
@@ -73,6 +73,7 @@ export class InicioPacienteTesteComponent {
       this.consultaService.listarConsultasPaciente(this.idPaciente).subscribe({
         next: (consultas) => {
           this.consultas = consultas;
+          console.log(this.consultas)
         },
         error: (error) => {
           console.error('Erro ao buscar consultas do paciente', error);
